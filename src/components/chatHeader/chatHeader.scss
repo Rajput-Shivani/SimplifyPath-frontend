@@ -1,0 +1,164 @@
+@import "../../styles/colors";
+
+.site-layout-background {
+  padding: 0;
+  border-radius: 5px 5px 0 0;
+
+  .chat-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    overflow: hidden;
+    border-radius: 5px 5px 0 0;
+    background-color: $primary-color;
+    transition: max-width 0.3s ease-in-out;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      flex-wrap: wrap;
+      transition: opacity 0.3s ease-in-out;
+      opacity: 1;
+
+      span svg {
+        width: 30px;
+        height: 30px;
+        color: $bg-white;
+        margin-right: 10px;
+      }
+
+      .add-btn {
+        margin-left: 10px;
+        padding: 5px 10px;
+      }
+
+      .header-chat-logo {
+        width: 50px;
+        height: auto;
+        margin-right: 10px;
+      }
+
+      .header-text {
+        display: flex;
+        flex-direction: column;
+
+        .header-text-data {
+          font-size: 18px;
+          color: #ffffff;
+        }
+
+        .header-subtext {
+          font-size: 14px;
+          color: #bbbbbb;
+        }
+      }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+
+      .ant-btn-default {
+        padding: 4px 8px;
+      }
+
+      .columns-btn {
+        margin-left: 10px;
+        padding: 5px 10px;
+      }
+    }
+
+    &.small-screen {
+      .header-left {
+        .header-text {
+          // display: none;
+        }
+      }
+
+      .header-right {
+        .ant-btn-default {
+          padding: 4px 8px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .site-layout-background {
+    .chat-header-content {
+      padding: 0 10px;
+    }
+
+    .header-left {
+      .header-chat-logo {
+        width: 40px;
+      }
+
+      .header-text-data {
+        font-size: 16px;
+      }
+
+      .add-btn {
+        margin-left: 5px;
+        padding: 4px 8px;
+      }
+    }
+
+    .header-right {
+      .ant-btn-default {
+        padding: 4px 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .header-left {
+    .header-chat-logo {
+      width: 30px;
+    }
+
+    .header-text-data {
+      font-size: 14px;
+    }
+
+    .add-btn {
+      margin-left: 2px;
+      padding: 2px 6px;
+    }
+  }
+
+  .header-right {
+    .ant-btn-default {
+      padding: 2px 6px;
+    }
+  }
+
+  .site-layout-background .chat-header-content .header-left span svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .site-layout-background
+    .chat-header-content
+    .header-left
+    .header-text
+    .header-text-data {
+    font-size: 12px;
+  }
+  .site-layout-background .chat-header-content .header-left .add-btn {
+    margin-left: 2px;
+    padding: 5px 5px;
+  }
+  .site-layout-background .chat-header-content .header-left span svg {
+    width: 17px;
+    height: 17px;
+  }
+  .site-layout-background .chat-header-content.small-screen .header-right .ant-btn-default {
+    padding: 4px 3px;
+}
+}

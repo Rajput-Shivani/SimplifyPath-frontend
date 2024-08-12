@@ -1,0 +1,22 @@
+@import '../../styles/colors';
+.graph-avatar{
+  background-color: $primary-color;
+  color: $bg-white;
+}
+.graph-card-desp{
+  color: $primary-color;
+  font-weight: 700;
+  font-size: 20px;
+}
+.analytics-card-wrapper{
+  border: none;
+}
+.pieChartContainer{
+  height: 100%;
+}
+.analytics_table{
+  margin-top: 10px;
+}
+.analytics-header-text{
+  margin-top: 10px;
+}

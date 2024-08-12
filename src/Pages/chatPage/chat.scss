@@ -1,0 +1,275 @@
+@import "../../styles/_colors.scss";
+.chat-layout {
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+.chat-content {
+  padding-left: 50px;
+  padding-right: 50px;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+  flex-grow: 1;
+  border-radius: 0px;
+}
+
+.chat-footer {
+  padding: 10px;
+  padding-left: 50px;
+  padding-right: 50px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #f0f0f0;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.chat-input {
+  flex-grow: 1;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.send-button {
+  border-radius: 5px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $primary-color;
+}
+
+.ant-btn.ant-btn-icon-only {
+  width: 50px;
+}
+
+.chat-list .ant-list-item-meta {
+  align-items: flex-start;
+}
+
+.chat-message {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.chat-message.user div div div {
+  display: flex;
+  justify-content: flex-end;
+}
+.chat-message.user div div h4 {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.chat-message.bot div div div {
+  display: flex;
+  justify-content: flex-start;
+}
+.chat-message.bot div div h4 {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.bubble {
+  --r: 15px;
+  --t: 15px;
+  padding: calc(2 * var(--r) / 2.5);
+  // max-width: 60%;
+  word-wrap: break-word;
+  display: inline-block;
+  -webkit-mask: radial-gradient(var(--t) at var(--_d) 0, #0000 98%, #000 102%)
+      var(--_d) 100% / calc(100% - var(--r)) var(--t) no-repeat,
+    conic-gradient(at var(--r) var(--r), #000 75%, #0000 0) calc(var(--r) / -2)
+      calc(var(--r) / -2) padding-box,
+    radial-gradient(50% 50%, #000 98%, #0000 101%) 0 0 / var(--r) var(--r) space
+      padding-box;
+}
+
+.left {
+  --_d: 0%;
+  border-left: var(--t) solid #0000;
+  margin-right: var(--t);
+  background-color: #d6f9d0;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  margin-top: 15px;
+  align-self: flex-start;
+  color: black;
+}
+
+.right {
+  --_d: 100%;
+  border-right: var(--t) solid #0000;
+  margin-left: var(--t);
+  background-color: #d9d9d9;
+  align-self: flex-ergb(214, 214, 214);
+  color: black;
+}
+
+.message-time {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 5px;
+}
+
+code .suggestion-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-height: 200px; 
+  overflow-y: auto;
+  background-color: $bg-white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+#suggestions-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 50px;
+  padding-right: 50px;
+  background-color: $chat-bg-color;
+}
+
+.scrollableSuggestions {
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.suggestionList {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid $border;
+  background-color: $bg-white;
+}
+
+.suggestionList:last-child {
+  border-bottom: none;
+}
+
+.icons {
+  width: 20px;
+  height: 20px;
+}
+
+.suggestions_div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.intent-container {
+  margin-top: 5px;
+}
+
+.suggestions {
+  display: flex;
+  align-items: center;
+}
+
+.suggestions svg {
+  margin-right: 5px;
+}
+.staticMenuColumn {
+  display: flex;
+  cursor: pointer;
+  padding: 14px;
+  border-bottom: 1px solid $border;
+  background-color: $bg-white;
+}
+.menuText {
+  margin-left: 23px;
+}
+
+.button_group {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  background-color: $bot-bg-color;
+  color: $bg-white;
+  padding: 0px;
+  box-shadow: none;
+  gap: 10px;
+  margin-left: 10px;
+  flex-direction: column;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.bot_button {
+  background-color: $bg-white;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  margin-top: 8px;
+  color: black;
+  // width: 100%;
+  border: 1px solid $primary-color;
+}
+
+.ant-btn-default:hover {
+  background-color: $primary-color !important;
+  color: $bg-white !important;
+}
+
+
+
+@media only screen and (max-width: 768px) {
+  .chat-content {
+    padding: 8px;
+  }
+
+  .chat-footer {
+    padding: 5px;
+  }
+
+  .chat-input {
+    font-size: 14px;
+  }
+
+  .chat-list .ant-list-item-meta .message-text {
+    max-width: 80%;
+  }
+  // .bubble {
+  //   max-width: fit-content;
+  // }
+  #suggestions-container {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+.date_time_section {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-weight: bold;
+}
+.date_time_section > div {
+  background-color: $primary-color;
+  color: #ffffff;
+  padding: 8px 20px;
+  border-radius: 5px;
+}
+
+.darwinOptions{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}

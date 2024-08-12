@@ -1,0 +1,227 @@
+@import "../../styles/_colors.scss";
+.chat-layout {
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 5px;
+
+  .integration-content {
+    padding: 24px;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+  }
+  .custom-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    .ant-card-body {
+      padding: 0;
+    }
+
+    .header {
+      background: #141a40;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: relative;
+      .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+      }
+      
+      .logo-org {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+        margin-left: 43px;
+        svg {
+          display: block;
+          margin: auto;
+        }
+        span {
+          width: 45px;
+          height: 45px;
+        }
+      }
+      .logo{
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 10px;
+        svg {
+          display: block;
+          margin: auto;
+        }
+        span {
+          width: 45px;
+          height: 45px;
+        }
+      }
+      
+      .switch-container {
+        margin-left: auto;
+        span{
+          background-color: $switch-bg-color;
+        }
+      
+      }
+      .switch-activated-container{
+        span{
+          background-color:$bg-white;
+        }
+        .ant-switch .ant-switch-handle::before{
+          background-color: $primary-color;
+        }
+      }
+
+  
+
+      .brand-name {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .tagline {
+        font-size: 12px;
+        margin-top: 5px;
+        a {
+          color: #dcdfe3;
+        }
+      }
+    }
+
+    .descriptions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnnttsZgXpSbNy7ucF1Uw7LGw8JQyWrzUuWw&s");
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .footer {
+      background: #ffffff;
+      padding: 10px;
+      color: #888;
+      font-size: 14px;
+      text-align: center;
+      border-top: 1px solid #fff;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+      background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnnttsZgXpSbNy7ucF1Uw7LGw8JQyWrzUuWw&s");
+      background-repeat: no-repeat;
+      background-size: cover;
+
+      button {
+        color: black;
+        box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+        background: white;
+        padding: 20px 25px;
+        border: 1p solid;
+        border: 1px solid #b6b6b6;
+        box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+          rgba(17, 17, 26, 0.1) 0px 8px 24px,
+          rgba(17, 17, 26, 0.1) 0px 16px 56px;
+        width: auto;
+      }
+
+      span {
+        margin: 0 10px;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        padding: 10px 5px;
+        text-align: center;
+
+        .kick-starter-btn {
+          margin: 10px 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+  }
+}
+.pop-up-content div{
+  padding: 10px 0px;
+  font-size: 16px;
+}
+.pop-up-content span{
+  padding: 12px;
+  span{
+    padding: 0px;
+  }
+}
+
+.ant-card .ant-card-head {
+  color: #fff;
+}
+.confirm-text{
+ display: flex;
+ justify-content: center;
+  font-size: 16px;
+  margin: 25px;
+  display: flex;
+  gap: 5px;
+}
+.confirm-text div{
+  color: $primary-color;
+}
+.gmail-icon svg{
+  width: 45px;
+  height: 45px;
+  color: red;
+}
+
+
+@media (max-width: 768px) {
+  .integration-card {
+    max-width: 100%;
+  }
+  .footer {
+    button {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .chat-layout .integration-content {
+    padding: 15px;
+
+    .cards-container {
+      gap: 16px;
+
+      .card-section {
+        h2 {
+          margin-bottom: 12px;
+        }
+
+        .integration-card {
+          .ant-card-body {
+            padding: 12px;
+          }
+        }
+      }
+    }
+  }
+
+  .ant-card .ant-card-extra {
+    margin-inline-start: inherit;
+  }
+
+  .ant-card .ant-card-head {
+    padding: 0px;
+  }
+
+  .ant-card .ant-card-head-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+}

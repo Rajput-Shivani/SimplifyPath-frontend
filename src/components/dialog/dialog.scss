@@ -1,0 +1,56 @@
+@import "../../styles/_colors.scss";
+
+.button-groups {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 50px;
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.ant-modal .ant-modal-title {
+  color: $primary-color;
+  text-align: center;
+  font-size: 22px;
+  text-transform: math-auto;
+}
+
+@media (max-width: 768px) {
+  .button-groups .integration-google-btn {
+    width: 120px;
+  }
+}
+
+@media (max-width: 576px) {
+  .button-groups .integration-google-btn {
+    width: 80px;
+  }
+}
+
+//activate deactivate
+.switchSectionWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+.switchHeader {
+  display: flex;
+  justify-content: space-between;
+}
+.accordian-label {
+  display: flex;
+  gap: 5px;
+}
+.methods-style{
+    display: flex !important;
+}
+.text-primary{
+  color: $primary-color;
+  margin-left: 5px;
+}

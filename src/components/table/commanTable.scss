@@ -1,0 +1,102 @@
+.table-layout {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 110px);
+  .table-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    .table-container {
+      flex: 1;
+      overflow-y: hidden;
+
+      .ant-table-wrapper {
+        .ant-table {
+          border-radius: 0px;
+          overflow-y: auto;
+        }
+      }
+    }
+  }
+
+  .pagination-footer {
+    padding: 0px;
+    background-color: #fff;
+    border-radius: 0px 0px 5px 5px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #f0f0f0;
+    width: 100%;
+
+    .ant-pagination {
+      text-align: center;
+      margin: 16px 0;
+    }
+  }
+}
+
+.ant-input {
+  padding: 10px;
+}
+.ant-btn-primary {
+  color: #fff;
+  box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+  background: #8176f2;
+  // padding: 20px 25px;
+}
+.ant-btn-primary:hover {
+  background: #8176f2;
+}
+.table-layout {
+  .ant-table-cell.hidden-column,
+  .ant-table-column-title.hidden-column {
+    display: none;
+  }
+
+  .disabled-row {
+    opacity: 0.7;
+  }
+  .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
+    display: flex;
+    gap: 14px;
+  }
+  .ant-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .ant-table {
+    min-width: 600px; /* Adjust based on your table's content */
+  }
+  
+}
+.ant-table-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.table-layout .ant-table-wrapper{
+  overflow-x: auto;
+    height: 100%;
+}
+@media (max-width: 600px) {
+  .ant-table {
+    font-size: 12px;
+  }
+
+  .ant-pagination {
+    font-size: 12px;
+  }
+
+  .ant-table-container {
+    overflow-x: auto;
+  }
+  .ant-table {
+    font-size: 12px;
+  }
+  .ant-table td {
+    padding: 8px;
+  }
+  .permissions-container {
+    max-width: 100%;
+  }
+}

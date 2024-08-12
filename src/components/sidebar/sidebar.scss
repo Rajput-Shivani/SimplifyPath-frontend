@@ -1,0 +1,115 @@
+@import "../../styles/_colors.scss";
+
+.logo {
+  height: 32px;
+}
+
+.trigger {
+  position: relative;
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+  color: #ffffff;
+  z-index: 1;
+  top: -15px;
+
+  &.collapsed {
+    right: -47px;
+  }
+
+  &.expanded {
+    right: -165px;
+  }
+}
+
+.menu-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.menu-container {
+  flex-grow: 1;
+}
+
+.ant-layout-sider {
+  position: relative;
+  min-width: 0;
+  background: $bg-white !important;
+  transition: all 0.2s, background 0s;
+  margin-top: 25px;
+  margin-bottom: 24px;
+  margin-left: 16px;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+  .anticon svg {
+    color: $primary-color !important;
+  }
+
+  .submenuesStyle {
+    color: black !important;
+  }
+  .ant-menu-inline {
+    background-color: $bg-white !important;
+  }
+  .ant-menu-submenu-title {
+    color: $bg-black !important;
+  }
+  .ant-menu {
+    &-dark {
+      background: $bg-white !important;
+
+      .ant-menu-item-selected {
+        background-color: $primary-color;
+        color: $bg-white !important;
+
+        .anticon svg {
+          color: $bg-white !important;
+        }
+        span a {
+          color: $bg-white !important;
+        }
+      }
+    }
+
+    .ant-menu-item {
+      border-radius: 5px;
+      color: $bg-black !important;
+    }
+  }
+
+  .logout-menu ul li {
+    background-color: $primary-color;
+    color: white;
+    span svg {
+      color: $bg-white !important;
+    }
+  }
+  .logout-menu {
+    .ant-menu-item {
+      color: $bg-white !important;
+    }
+  }
+  .logout-menu ul li:hover {
+    background-color: $bg-white;
+    color: $primary-color;
+  }
+
+  .logout-menu ul li:hover span svg {
+    color: $primary-color !important;
+  }
+
+  .logout-menu .ant-menu-item:hover {
+    color: $primary-color !important;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .ant-layout-sider {
+    margin-left: 0px;
+  }
+}

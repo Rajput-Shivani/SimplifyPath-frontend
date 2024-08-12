@@ -1,0 +1,21 @@
+.custom-collapse .collapse-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ant-collapse>.ant-collapse-item{
+    margin-top: 20px;
+  }
+  .header-title {
+    flex: 1;
+  }
+  
+  .header-radio {
+    margin-left: 10px; 
+  }
+  .preview-btn{
+    display: flex;
+    justify-content: space-between;
+  }
+  
