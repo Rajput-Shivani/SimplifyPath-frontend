@@ -19,7 +19,6 @@ import {
 } from "@ant-design/icons";
 import "./custom.scss";
 import TopHeader from "../../../components/header/Header";
-import CustomFormData from "./CategoriesOpions";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCustom_Action } from "../../../redux/slices/trainAndContentSlice";
 import { useNavigate } from "react-router-dom";
