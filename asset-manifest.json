@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/SimplifyPath-frontend/static/css/main.982899c8.css",
+    "main.js": "/SimplifyPath-frontend/static/js/main.9972f0b4.js",
+    "static/js/453.68693753.chunk.js": "/SimplifyPath-frontend/static/js/453.68693753.chunk.js",
+    "static/media/Telegram.png": "/SimplifyPath-frontend/static/media/Telegram.d3dae4c5a70594dc111a.png",
+    "static/media/Jira.svg": "/SimplifyPath-frontend/static/media/Jira.132b79d73e7435089ee5ed1075d0c6f1.svg",
+    "static/media/chatSound.mp3": "/SimplifyPath-frontend/static/media/chatSound.b43a86f0cb4d152aba9e.mp3",
+    "index.html": "/SimplifyPath-frontend/index.html",
+    "static/media/dropdown.svg": "/SimplifyPath-frontend/static/media/dropdown.05046a62260cea6a45229193d6f22b5b.svg",
+    "main.982899c8.css.map": "/SimplifyPath-frontend/static/css/main.982899c8.css.map",
+    "main.9972f0b4.js.map": "/SimplifyPath-frontend/static/js/main.9972f0b4.js.map",
+    "453.68693753.chunk.js.map": "/SimplifyPath-frontend/static/js/453.68693753.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.982899c8.css",
+    "static/js/main.9972f0b4.js"
+  ]
+}
