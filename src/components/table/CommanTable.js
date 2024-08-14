@@ -351,7 +351,7 @@ const CommanTable = ({
               : { render: () => null, className: "hidden-column" }),
           },
         ]),
-    ...(isOrganizationGet && editPermissionEdit
+    ...(editPermissionEdit
       ? [
           {
             title:
