@@ -33,10 +33,11 @@ import darwinbox from "../../assets/darwin.png";
 import dbf from "../../assets/dbf.png";
 import Telegram from "../../assets/Telegram.png";
 import { toast } from "react-toastify";
-import Loading from "../../components/Loader/Loading";
+import AppSecureStorage from "../../services/secureStorage";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
+const storage = new AppSecureStorage();
 
 const avatarMap = {
   google_calendar: googleCalender,
@@ -52,6 +53,7 @@ export const IntegrationContent = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const roleData = storage.get("role");
   const { user, profileLoading } = useSelector((state) => state.profileReducer);
   const { allDocument, documentLoad } = useSelector(
     (state) => state.trainAndContentReducer
@@ -173,52 +175,51 @@ export const IntegrationContent = () => {
                   </Col>
                 </Row>
                 <div className="list-container">
-                    <List
-                      className="demo-loadmore-list"
-                      itemLayout="horizontal"
-                      dataSource={allDocument?.data}
-                      loading={documentLoad}
-                      renderItem={(item) => (
-                        <List.Item
-                          actions={[
-                            <Tooltip
-                              title={
+                  <List
+                    className="demo-loadmore-list"
+                    itemLayout="horizontal"
+                    dataSource={allDocument?.data?.filter((item) =>
+                      item?.role?.includes(roleData)
+                    )}
+                    loading={documentLoad}
+                    renderItem={(item) => (
+                      <List.Item
+                        actions={[
+                          <Tooltip
+                            title={
+                              item?.type === "url"
+                                ? "Copy link"
+                                : "Download file"
+                            }
+                          >
+                            <Tag
+                              color="purple"
+                              onClick={() =>
                                 item?.type === "url"
-                                  ? "Copy link"
-                                  : "Download file"
+                                  ? handleCopy(item?.urlLink)
+                                  : handleDownload(item.location, item.fileName)
                               }
                             >
-                              <Tag
-                                color="purple"
-                                onClick={() =>
-                                  item?.type === "url"
-                                    ? handleCopy(item?.urlLink)
-                                    : handleDownload(
-                                        item.location,
-                                        item.fileName
-                                      )
-                                }
-                              >
-                                {item?.type === "url" ? (
-                                  <CopyOutlined />
-                                ) : (
-                                  <DownloadOutlined />
-                                )}
-                              </Tag>
-                            </Tooltip>,
-                          ]}
-                        >
-                          <List.Item.Meta
-                            title={
-                              <div>
-                                {item.fileName.replace(/\.(pdf|txt|doc)$/, "")}
-                              </div>
-                            }
-                            description={item?.description}
-                          />
-                        </List.Item>
-                      )}
-                    />
+                              {item?.type === "url" ? (
+                                <CopyOutlined />
+                              ) : (
+                                <DownloadOutlined />
+                              )}
+                            </Tag>
+                          </Tooltip>,
+                        ]}
+                      >
+                        <List.Item.Meta
+                          title={
+                            <div>
+                              {item.fileName.replace(/\.(pdf|txt|doc)$/, "")}
+                            </div>
+                          }
+                          description={item?.description}
+                        />
+                      </List.Item>
+                    )}
+                  />
                   <Pagination
                     current={page}
                     pageSize={limit}
