@@ -6,7 +6,6 @@ import { PAGE_ROUTES } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AppSecureStorage from "../../services/secureStorage";
-import { setUserToken } from "../../redux/slices/authSlice";
 
 const { Header } = Layout;
 
@@ -19,7 +18,6 @@ const AppHeader = () => {
 
   const handleLogout = () => {
     storage.clearStorage();
-    dispatch(setUserToken(""));
     navigate(PAGE_ROUTES.HOME);
   };
 

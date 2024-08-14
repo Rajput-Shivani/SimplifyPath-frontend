@@ -12,6 +12,7 @@ import {
   Input,
   Tag,
   Form,
+  Spin,
 } from "antd";
 import {
   BarChart,
@@ -31,10 +32,12 @@ import {
   EditOutlined,
   FieldTimeOutlined,
   FileDoneOutlined,
+  LoadingOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 import "../analytics.scss";
+import Loading from "../../../components/Loader/Loading";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -55,7 +58,7 @@ const formatChartData = (data) => {
 const AreaChartPage = ({ unitOfTime, numericValue }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { analyticsData } = useSelector((state) => state.analyticsReducer);
+  const { analyticsData , loader} = useSelector((state) => state.analyticsReducer);
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
@@ -118,7 +121,7 @@ const AreaChartPage = ({ unitOfTime, numericValue }) => {
         <Row gutter={16}>
           <Col xs={24} lg={16}>
             <Row gutter={16}>
-              <Col xs={24} lg={8}>
+              <Col xs={24} lg={8} className="analytics-header-text">
                 <Card
                   style={{
                     width: "100%",
@@ -135,7 +138,7 @@ const AreaChartPage = ({ unitOfTime, numericValue }) => {
                     title="Total Requests"
                     description={
                       <div className="graph-card-desp">
-                        {analyticsData?.totalRequests || 0}
+                        {loader? <Spin indicator={<LoadingOutlined spin />} size="large" />: analyticsData?.totalRequests || 0}
                       </div>
                     }
                   />
@@ -156,7 +159,7 @@ const AreaChartPage = ({ unitOfTime, numericValue }) => {
                     }
                     title="Average Response Time"
                     description={
-                      <div className="graph-card-desp">{numericValue || 0}</div>
+                      <div className="graph-card-desp">{loader ? <Spin indicator={<LoadingOutlined spin />} size="large" /> : numericValue || 0}</div>
                     }
                   />
                 </Card>
@@ -195,7 +198,13 @@ const AreaChartPage = ({ unitOfTime, numericValue }) => {
       <Title level={3} style={{ margin: "20px 0px" }}>
         Category wise request
       </Title>
-      <ResponsiveContainer width="100%" height={266}>
+      {
+        loader ? 
+        <div className="align-center">
+          <Spin/>
+        </div>
+        :
+        <ResponsiveContainer width="100%" height={266}>
         <BarChart
           data={data1}
           margin={{ top: 30, right: 30, left: 20, bottom: 0 }}
@@ -213,31 +222,44 @@ const AreaChartPage = ({ unitOfTime, numericValue }) => {
           <Bar dataKey="value" fill="#baddf8" />
         </BarChart>
       </ResponsiveContainer>
+      }
       <Title level={3} style={{ margin: "20px 0px" }}>
         Source wise request
       </Title>
-      <ResponsiveContainer width="100%" height={266}>
-        <BarChart
-          data={data2}
-          margin={{ top: 30, right: 30, left: 20, bottom: 0 }}
-          style={{ paddingRight: "30px" }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-          <YAxis
-            ticks={yAxisTicks}
-            tick={{ fontSize: 12 }}
-            tickFormatter={formatYAxis}
-          />
-          <Tooltip />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
-          <Bar dataKey="value" fill="#baddf8" />
-        </BarChart>
-      </ResponsiveContainer>
+      {loader ?
+      <div className="align-center">
+      <Spin/>
+    </div>:
+    <ResponsiveContainer width="100%" height={266}>
+    <BarChart
+      data={data2}
+      margin={{ top: 30, right: 30, left: 20, bottom: 0 }}
+      style={{ paddingRight: "30px" }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+      <YAxis
+        ticks={yAxisTicks}
+        tick={{ fontSize: 12 }}
+        tickFormatter={formatYAxis}
+      />
+      <Tooltip />
+      <Legend wrapperStyle={{ fontSize: 12 }} />
+      <Bar dataKey="value" fill="#baddf8" />
+    </BarChart>
+  </ResponsiveContainer>
+    }
+      
       <Title level={3} style={{ margin: "20px 0px" }}>
         Action wise request
       </Title>
-      <ResponsiveContainer width="100%" height={266}>
+      {
+        loader ? 
+        <div className="align-center">
+          <Spin/>
+        </div>
+        :
+        <ResponsiveContainer width="100%" height={266}>
         <BarChart
           data={data3}
           margin={{ top: 30, right: 30, left: 20, bottom: 0 }}
@@ -255,6 +277,7 @@ const AreaChartPage = ({ unitOfTime, numericValue }) => {
           <Bar dataKey="value" fill="#baddf8" />
         </BarChart>
       </ResponsiveContainer>
+      }
     </>
   );
 };

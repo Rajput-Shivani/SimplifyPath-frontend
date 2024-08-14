@@ -1,220 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import CommanTable from "../../components/table/CommanTable";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import {
-//   getAllUsersManagementData,
-//   getRoles,
-// } from "../../redux/slices/userManagementSlice";
-// import { DialogBox } from "../../components/dialog/DialogBox";
-// import {
-//   DeleteOutlined,
-//   MailOutlined,
-//   UsergroupAddOutlined,
-// } from "@ant-design/icons";
-// import {
-//   setActionName,
-//   setCloseBtnName,
-//   setIsPopUpShow,
-//   setPopUpTitle,
-//   setSubmitBtnName,
-// } from "../../redux/slices/popUpSlice";
-// import { Button, Form, Input, Select } from "antd";
-
-// export const UserManagement = () => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const [selectRole, setSelectedRole]= useState("")
-//   const { getUserManagementData, pageRole, limitRole,getRolesData } = useSelector(
-//     (state) => state.userManagementReducer
-//   );
-//   const [userData, setUserData] = useState({
-//     email: "",
-//     name: "",
-//     roleId: "",
-//   });
-//   const {closeBtnName, submitBtnName} = useSelector((state)=>state.popUpRedducer)
-//   const handleChange = (value) => {
-//     console.log(`selected ${value}`);
-//     setSelectedRole(value)
-//   };
-
-//   const handleChangeInput = (e) => {
-//     const { name, value } = e.target;
-//     console.log({ name, value } )
-//     setUserData(prevState => ({
-//       ...prevState,
-//       [name]: value,
-//     }));
-//   };
-
-//   const { page, limit, filterValue, selectedRole, sortConfig, searchInput } =
-//     useSelector((state) => state.globalReducer);
-
-//   const confirmDialog = () => {
-//     return (
-//       <div className="confirm-text">
-//         Are you sure you want to change the role to{" "}
-//         <strong>{selectedRole}</strong>?
-//       </div>
-//     );
-//   };
-
-//   const [visibleColumns, setVisibleColumns] = useState({
-//     sNo: true,
-//     name: true,
-//     email: false,
-//     role: true,
-//     status: false,
-//   });
-
-//   const handleEdit = (record) => {
-//     // Implement edit functionality
-//   };
-
-//   const handleDelete = (keys) => {
-//     // setData((prevData) => prevData.filter((item) => !keys.includes(item.key)));
-//   };
-
-//   useEffect(() => {
-//     dispatch(
-//       getAllUsersManagementData({
-//         page,
-//         limit,
-//         navigate,
-//         filterValue: filterValue?.toLowerCase(),
-//         searchQuery: searchInput || "",
-//         sortKey: sortConfig.key,
-//         sortDirection: sortConfig.direction,
-//       })
-//     );
-//     dispatch(getRoles({ navigate: navigate }));
-//   }, []);
-
-//   const actionsOptions = [
-//     {
-//       label: "send reminder",
-//       acttion: () => "hello",
-//       icon: <MailOutlined />,
-//     },
-//     {
-//       label: "Delete",
-//       acttion: () => "hello",
-//       icon: <DeleteOutlined />,
-//     },
-//   ];
-
-//   const handlePopUpOpen = () => {
-//     dispatch(setCloseBtnName("Close"));
-//     dispatch(setSubmitBtnName("Submit"));
-//     dispatch(setActionName("Add User Management"));
-//     dispatch(setPopUpTitle("Add User Management"));
-//     dispatch(setIsPopUpShow(true));
-//   };
-
-//   const options = getRolesData?.data?.map(role => ({
-//     value: role?.name,
-//     label: role?.name
-//   }));
-//   console.log("getRolesData", getRolesData)
-
-//   const renderPopupContent = () => {
-//     return (
-//       <div>
-//         <Form.Item label="Email" layout="vertical" wrapperCol={{ span: 24 }}>
-//         <Input
-//           size="large"
-//           name="email"
-//           type="email"
-//           value={userData?.email}
-//           onChange={handleChangeInput}
-//           placeholder="Enter email"
-//           prefix={<MailOutlined />}
-//           // value={refreshToken}
-//           // onChange={(e) => dispatch(setRefreshToken(e.target.value))}
-//         />
-//         </Form.Item>
-
-//         <Form.Item label="Name" layout="vertical">
-//         <Input
-//           size="large"
-//           name="name"
-//           value={userData?.name}
-//           onChange={handleChangeInput}
-//           placeholder="Enter Name"
-//           prefix={<MailOutlined />}
-//         />
-//         </Form.Item>
-
-//        <Form.Item label="Role" layout="vertical">
-//        <Select
-//           // defaultValue="lucy"
-//           value={selectRole}
-//           size="large"
-//           onChange={handleChange}
-//           // onClick={()=>setUserData({...userData, roleId:})}
-//           style={{ width: '100%'}}
-//           allowClear
-//           options={options}
-//         />
-//        </Form.Item>
-//       </div>
-//     );
-//   };
-
-//   const handleOk = () => {
-//     dispatch(setIsPopUpShow(false));
-//     // setAddNewRole({...addNewRole, name:"", permissions:{}})
-//   };
-
-//   const onSubmit = () =>{
-    
-//   }
-
-//   const renderFooter = () => (
-//     <div className="button-groups">
-//       <Button onClick={handleOk}>{closeBtnName}</Button>
-//       <Button onClick={onSubmit}>{submitBtnName}</Button>
-//     </div>
-//   );
-
-//   return (
-//     <>
-//       {" "}
-//       <CommanTable
-//         title="User Management"
-//         data={getUserManagementData?.data}
-//         onEdit={handleEdit}
-//         onDelete={handleDelete}
-//         visibleColumns={visibleColumns}
-//         setVisibleColumns={setVisibleColumns}
-//         apiCall={(page, limit, searchInput) => {
-//           dispatch(
-//             getAllUsersManagementData({
-//               page: page,
-//               limit: limit,
-//               navigate,
-//               filterValue: filterValue?.toLowerCase(),
-//               searchQuery: searchInput,
-//               sortKey: sortConfig.key,
-//               sortDirection: sortConfig.direction,
-//             })
-//           );
-//         }}
-//         actionsOptions={actionsOptions}
-//         openAddPopup={handlePopUpOpen}
-//         icon={<UsergroupAddOutlined className="icon-size text-white" />}
-//         onClose={() => dispatch(setIsPopUpShow(false))}
-//         renderPopupContent={renderPopupContent}
-//         isFooter={true}
-//         customFooter={renderFooter}
-//       />
-//       {/* <DialogBox renderUi={confirmDialog} /> */}
-//     </>
-//   );
-// };
-
-
 import React, { useEffect, useState } from "react";
 import CommanTable from "../../components/table/CommanTable";
 import { useDispatch, useSelector } from "react-redux";
@@ -243,6 +26,7 @@ import {
 import { Button, Form, Input, Select } from "antd";
 import { setConfirmationContent, setConfirmationData, setConfirmationTitle, setIsConfirmation, setSelectedOption } from "../../redux/slices/globalSlice";
 import Confirmation from "../../components/dialog/Confirmation";
+import { isUserManagementDelete } from "../../utils/permissions";
 
 export const UserManagement = () => {
   const dispatch = useDispatch();
@@ -256,7 +40,7 @@ export const UserManagement = () => {
 
   const [status, setStatus] = useState("")
 
-  const { getUserManagementData, pageRole, limitRole, getRolesData } = useSelector(
+  const { getUserManagementData, pageRole, limitRole, getRolesData ,loading} = useSelector(
     (state) => state.userManagementReducer
   );
   const { closeBtnName, submitBtnName } = useSelector(
@@ -287,15 +71,6 @@ export const UserManagement = () => {
     }));
   };
 
-  const confirmDialog = () => {
-    return (
-      <div className="confirm-text">
-        Are you sure you want to change the role to{" "}
-        <strong>{selectedRole}</strong>?
-      </div>
-    );
-  };
-
   const [visibleColumns, setVisibleColumns] = useState({
     sNo: true,
     name: true,
@@ -303,14 +78,6 @@ export const UserManagement = () => {
     role: true,
     status: false,
   });
-
-  const handleEdit = (record) => {
-    // Implement edit functionality
-  };
-
-  const handleDelete = (keys) => {
-    // setData((prevData) => prevData.filter((item) => !keys.includes(item.key)));
-  };
 
   useEffect(() => {
     dispatch(
@@ -354,7 +121,7 @@ export const UserManagement = () => {
       },
       icon: <MailOutlined />,
     },
-    {
+    isUserManagementDelete && {
       label: "Delete",
       acttion: (record) => {
         setStatus("delete")
@@ -462,15 +229,12 @@ export const UserManagement = () => {
     }))
     dispatch(setIsConfirmation(false))
   }
-  console.log("userData", userData)
 
   return (
     <>
       <CommanTable
         title="User Management"
         data={getUserManagementData?.data}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
         visibleColumns={visibleColumns}
         setVisibleColumns={setVisibleColumns}
         apiCall={(page, limit, searchInput) => {
@@ -497,8 +261,8 @@ export const UserManagement = () => {
         isFooter={true}
         customFooter={renderFooter}
         isAdd={true}
+        loading={loading}
       />
-      {/* <DialogBox renderUi={confirmDialog} /> */}
       <Confirmation isRemove={status === "reminder" ? false : true} 
       onRemove={handleRemove}
       onSubmit={handlesendRminder}

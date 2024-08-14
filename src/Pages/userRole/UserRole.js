@@ -26,6 +26,7 @@ import {
   setIsEditActive,
   setIsEditpopup,
   setIsPopUpShow,
+  setPopUpTitle,
   setSubmitBtnName,
 } from "../../redux/slices/popUpSlice";
 import { Button, Input } from "antd";
@@ -45,7 +46,7 @@ export const UserRole = () => {
     searchInput,
     selectedOptionData,
   } = useSelector((state) => state.globalReducer);
-  const { roles, addUserRoles } = useSelector((state) => state.userRoleReducer);
+  const { roles, addUserRoles,loading } = useSelector((state) => state.userRoleReducer);
   const { closeBtnName, submitBtnName, isEditpopup, isEditActivate } =
     useSelector((state) => state.popUpRedducer);
   const [userData, setUserData] = useState({
@@ -91,6 +92,7 @@ export const UserRole = () => {
     dispatch(setCloseBtnName("Cancel"));
     dispatch(setSubmitBtnName("Next"));
     dispatch(setActionName("User Role"));
+    dispatch(setPopUpTitle("User Role"));
     dispatch(setIsPopUpShow(true));
   };
 
@@ -126,7 +128,7 @@ export const UserRole = () => {
   const handleOk = () => {
     dispatch(setIsActivatePopup(false));
     dispatch(setIsPopUpShow(false));
-    setAddNewRole({...addNewRole, name:"", permissions:{}})
+    setAddNewRole({ ...addNewRole, name: "", permissions: {} });
   };
 
   const renderFooter = () => (
@@ -138,13 +140,15 @@ export const UserRole = () => {
 
   const onSubmitPermission = () => {
     const filteredPermissions = Object.fromEntries(
-      Object.entries(addNewRole?.permissions).filter(([key, value]) => value.length > 0)
+      Object.entries(addNewRole?.permissions).filter(
+        ([key, value]) => value.length > 0
+      )
     );
     const updatedRole = {
       ...addNewRole,
       permissions: filteredPermissions,
     };
-    console.log("updatedRole", updatedRole)
+    console.log("updatedRole", updatedRole);
     if (isEditActivate) {
       dispatch(
         editRoleData({
@@ -167,14 +171,14 @@ export const UserRole = () => {
         getRolesData({
           page,
           limit,
-          searchQuery:searchItem || "",
-          sortKey:sortConfig.key,
-          sortDirection:sortConfig.direction,
+          searchQuery: searchItem || "",
+          sortKey: sortConfig.key,
+          sortDirection: sortConfig.direction,
           navigate,
         })
       );
       dispatch(getAllPermissions({ navigate: navigate }));
-      setAddNewRole({...addNewRole, name:"", permissions:{}})
+      setAddNewRole({ ...addNewRole, name: "", permissions: {} });
     } else {
       dispatch(
         addNewRoleData({
@@ -185,7 +189,7 @@ export const UserRole = () => {
           sortKey: sortConfig.key,
           sortDirection: sortConfig.direction,
           navigate: navigate,
-        }),
+        })
       );
       dispatch(setIsActivatePopup(false));
       dispatch(getAllPermissions({ navigate: navigate }));
@@ -232,18 +236,20 @@ export const UserRole = () => {
         icon={<UserOutlined className="icon-size text-white" />}
         openAddPopup={handlePopUpOpen}
         renderPopupContent={renderPopupContent}
-        // onNext={onNext}
         isFooter={true}
         customFooter={renderFooter}
         isEdit={isEditpopup}
-        onClose={()=>setAddNewRole({...addNewRole, name:"", permissions:{}})}
+        onClose={() =>
+          setAddNewRole({ ...addNewRole, name: "", permissions: {} })
+        }
         isAdd={true}
+        loading={loading}
       />
       <Confirmation />
       <ActiveDeactive
         setOpen={() => {
-          dispatch(setIsActivatePopup(false))
-          setAddNewRole({...addNewRole, name:"", permissions:{}})
+          dispatch(setIsActivatePopup(false));
+          setAddNewRole({ ...addNewRole, name: "", permissions: {} });
         }}
         onClose={handleOk}
         addNewRole={addNewRole}

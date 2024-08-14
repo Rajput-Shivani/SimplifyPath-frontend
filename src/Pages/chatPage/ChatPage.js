@@ -1,18 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Layout, Input, List, Button, Divider } from "antd";
 import {
-  Layout,
-  Input,
-  List,
-  Avatar,
-  Button,
-  Divider,
-  message,
-  Spin,
-  Row,
-  Col,
-} from "antd";
-import {
-  UserOutlined,
   SendOutlined,
   InfoCircleFilled,
   MenuOutlined,
@@ -34,7 +22,11 @@ import {
   setReviewSubmitted,
   setSocket,
 } from "../../redux/slices/chatSlice";
-import { addDateAndTime, formatTime } from "../../utils/helpers";
+import {
+  addDateAndTime,
+  formatTime,
+  unauthorizedError,
+} from "../../utils/helpers";
 import sound from "../../assets/chatSound.mp3";
 import AppSecureStorage from "../../services/secureStorage";
 import io from "socket.io-client";
@@ -44,14 +36,12 @@ import jira from "../../assets/Jira.svg";
 import googleCalender from "../../assets/googleCalender.png";
 import salesForce from "../../assets/Saleforce.png";
 import keka from "../../assets/keka.png";
-import darwinbox from "../../assets/darwin.png";
 import dbf from "../../assets/dbf.png";
-import Telegram from "../../assets/Telegram.png";
 import { toast } from "react-toastify";
 import BouncingLoader from "../../components/Loader/BouncingLoader";
 import TopHeader from "../../components/header/Header";
-import SpinLoader from "../../components/Loader/SpinLoader";
-import { getProfileDetails } from "../../redux/slices/profileSlice";
+import Loading from "../../components/Loader/Loading";
+import { FeedbackPage } from "./FeedbackPage";
 
 const { Content, Footer } = Layout;
 let socket;
@@ -69,7 +59,9 @@ export const ChatPage = () => {
   const [askForFeedback, setAskForFeedback] = useState(false);
   const [botType, setBotType] = useState("");
   const [botButtons, setBotButons] = useState([]);
-  const { messages, newMessage, loader } = useSelector(
+  const [isSuggestions, setIsSuggestions] = useState(false);
+  const [currentBotMsg, setCurrentBotMsg]= useState({})
+  const { messages, newMessage, loader, loading } = useSelector(
     (state) => state.chatReducer
   );
   const isLoading = useSelector((state) => state.chatReducer.loader);
@@ -98,6 +90,7 @@ export const ChatPage = () => {
       newMessage.timestamp = new Date().toISOString();
       dispatch(setMessages(newMessage));
       dispatch(setLoading(false));
+      setShowSuggestions(false);
       setVaraib("");
       playSendMessageSound();
       setIsLoading(false);
@@ -111,7 +104,7 @@ export const ChatPage = () => {
   useEffect(() => {
     setShouldScrollSuggestions(suggestions.length > 5);
     const handleClickOutside = (event) => {
-      if (suggestions.length > 0) {
+      if (suggestions.length >= 0) {
         const suggestionsContainer = document.getElementById(
           "suggestions-container"
         );
@@ -151,8 +144,9 @@ export const ChatPage = () => {
         setShowSuggestions(false);
       }
     } catch (error) {
+      setShowSuggestions(false);
       if (error?.response && error?.response.status === 401) {
-        // unauthorizedError(navigate);
+        unauthorizedError(navigate);
       }
     }
   };
@@ -191,6 +185,8 @@ export const ChatPage = () => {
     }
   };
 
+  console.log("currentMSG", currentBotMsg)
+
   useEffect(() => {
     if (loader) {
       setVaraib(
@@ -204,6 +200,7 @@ export const ChatPage = () => {
               timestamp: new Date().toISOString(),
             })
           );
+          setShowSuggestions(false);
           playSendMessageSound();
           scrollToBottom();
         }, 3000)
@@ -215,6 +212,9 @@ export const ChatPage = () => {
     } else {
       clearTimeout(varaib);
     }
+    if (loading && isloading) {
+      setShowSuggestions(false);
+    }
   }, [loader]);
 
   const scrollToBottom = () => {
@@ -223,28 +223,46 @@ export const ChatPage = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    setIsSuggestions(true);
+    console.log("eee", e);
+    setShowSuggestions(false);
+    if (isloading) {
+      setShowSuggestions(false);
+    }
     scrollToBottom();
     if (newMessage.trim() === "") {
       toast.error("Message cannot be empty");
+      setShowSuggestions(false);
     } else if (newMessage.includes("<") || newMessage.includes(">")) {
       toast.error("Message cannot contain '<' or '>'");
+      setShowSuggestions(false);
     } else {
       scrollToBottom();
       sendMessage(newMessage, "text");
+      console.log(newMessage)
+      setShowSuggestions(false);
       setNewMessage("");
     }
   };
 
   const playSendMessageSound = () => {
-    const audio = new Audio(sound);
-    audio.load();
-    audio.play();
+    if (document.hasFocus()) {
+      const audio = new Audio(sound);
+      audio?.load();
+      audio.play().catch((error) => {
+        console.error("Audio play error:", error);
+      });
+    }
   };
+  
 
   const onChange = (e) => {
     const inputText = e.target.value;
     dispatch(setNewMessage(inputText));
 
+    if (!inputText) {
+      setShowSuggestions(false);
+    }
     // Only fetch suggestions and show them if newMessage is not empty
     if (inputText.trim() !== "") {
       fetchSuggestions(inputText);
@@ -276,17 +294,6 @@ export const ChatPage = () => {
     setShowSuggestions(false);
     sendMessage(selectedSuggestion);
   };
-  //
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
-
-  const handleUploadClick = () => {
-    document.getElementById("fileInput").click();
-  };
-  //
 
   useEffect(() => {
     scrollToBottom();
@@ -299,7 +306,15 @@ export const ChatPage = () => {
 
   useEffect(() => {
     dispatch(getChatData(navigate));
-    dispatch(getProfileDetails());
+    if (isloading && newMessage) {
+      setShowSuggestions(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isSuggestions && isloading) {
+      setShowSuggestions(false);
+    }
   }, []);
 
   return (
@@ -311,124 +326,99 @@ export const ChatPage = () => {
         icon={<AliwangwangOutlined className="icon-size text-white" />}
       />
       <Content className="chat-content">
-        <List
-          className="chat-list"
-          itemLayout="horizontal"
-          loading={isLoading}
-          dataSource={all_messages}
-          renderItem={(item) => {
-            if (!item?.message?.trim()) {
-              return null;
-            }
-            const isLatestMessage =
-              item?.timestamp === latestMessage?.timestamp;
-
-            return (
-              <>
-                {item?.day && (
-                  <>
-                    <div className="date_time_section">
-                      <div>{item?.day?.replace(/,/g, "")}</div>
-                    </div>
-                    <Divider />
-                  </>
-                )}
-
-                <List.Item className={`chat-message ${item.sentby}`}>
-                  <List.Item.Meta
-                    className={`bubble ${
-                      item.sentby === "bot" ? "bot-message" : "user-message"
-                    }`}
-                    description={
-                      <div
-                        className={`bubble ${
-                          item.sentby === "bot" || !item.sentby
-                            ? "right"
-                            : "left"
-                        }`}
-                      >
-                        {item?.message && (
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: urlify(
-                                item.message.replace(/(?:\r\n|\r|\n)/g, "<br>")
-                              ),
-                            }}
-                          ></div>
-                        )}
-
-                        {isLatestMessage &&
-                          item.buttons &&
-                          botType === "button" && (
-                            <div className="darwinOptions">
-                              {botButtons?.map((text) => (
-                                <Button
-                                  key={text}
-                                  fullWidth
-                                  onClick={() => sendMessage(text, "button")}
-                                >
-                                  {text}
-                                </Button>
-                              ))}
-                            </div>
-                          )}
+        {loading ? (
+          <Loading />
+        ) : (
+          <List
+            className="chat-list"
+            itemLayout="horizontal"
+            loading={isLoading}
+            dataSource={all_messages}
+            renderItem={(item) => {
+              if (!item?.message?.trim()) {
+                return null;
+              }
+              const isLatestMessage =
+                item?.timestamp === latestMessage?.timestamp;
+              console.log("isLatestMessage", isLatestMessage);
+              return (
+                <>
+                  {item?.day && (
+                    <>
+                      <div className="date_time_section">
+                        <div>{item?.day?.replace(/,/g, "")}</div>
                       </div>
-                    }
-                    title={
-                      <span className="message-time">
-                        {formatTime(item.timestamp)}
-                      </span>
-                    }
-                  />
-                </List.Item>
-              </>
-            );
-          }}
-        />
+                      <Divider />
+                    </>
+                  )}
 
-        {/* {all_messages.map((messageList) => {
-          return (
-            <Row justify={messageList?.sentby === "bot" ? "start" :"end"} gutter={16}>
-              <Col lg={12}>
-                {messageList?.sentby === "bot" && (
-                  <>
-                    {messageList?.message && (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: urlify(
-                            messageList.message.replace(
-                              /(?:\r\n|\r|\n)/g,
-                              "<br>"
-                            )
-                          ),
-                        }}
-                      ></div>
-                    )}
-                  </>
-                )}
-              </Col>
-              <Col lg={12}>
-                {messageList?.sentby === "user" && (
-                  <>
-                    {messageList?.message && (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: urlify(
-                            messageList.message.replace(
-                              /(?:\r\n|\r|\n)/g,
-                              "<br>"
-                            )
-                          ),
-                        }}
-                      ></div>
-                    )}
-                  </>
-                )}
-              </Col>
-            </Row>
-          );
-        })} */}
+                  <List.Item className={`chat-message ${item.sentby}`}>
+                    <List.Item.Meta
+                      className={`bubble ${
+                        item.sentby === "bot" ? "bot-message" : "user-message"
+                      }`}
+                      description={
+                        <div
+                          className={`bubble ${
+                            item.sentby === "bot" || !item.sentby
+                              ? "right bot-message"
+                              : "left"
+                          }`}
+                        >
+                          {item?.message && (
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: urlify(
+                                  item.message.replace(
+                                    /(?:\r\n|\r|\n)/g,
+                                    "<br>"
+                                  )
+                                ),
+                              }}
+                            ></div>
+                          )}
+                          {isLatestMessage &&
+                            item?.buttons &&
+                            botType === "button" && (
+                              <div className="darwinOptions">
+                                {botButtons?.map((text) => (
+                                  <Button
+                                    key={text}
+                                    fullWidth
+                                    onClick={() => sendMessage(text, "button")}
+                                  >
+                                    {text}
+                                  </Button>
+                                ))}
+                              </div>
+                            )}
 
+
+                          {askForFeedback &&
+                          isLatestMessage &&
+                            (item?.sentby === "bot" || !item?.sentby) &&
+                            item?.message !==
+                              "We are currently processing your request, and you will receive a confirmation message once its completed. In the meantime, feel free to provide any additional prompts or inquiries." && (
+                              <FeedbackPage
+                                isloading={isloading}
+                                newMessage={latestMessage}
+                                setShowSuggestions={setShowSuggestions}
+                              />
+                            )}
+                        </div>
+                      }
+                      title={
+                        <span className="message-time">
+                          {formatTime(item.timestamp)}
+                        </span>
+                      }
+                    />
+                  </List.Item>
+                </>
+              );
+            }}
+          />
+        )}
         <div ref={messagesRef}></div>
         <div>{isloading && <BouncingLoader />}</div>
       </Content>
@@ -438,7 +428,7 @@ export const ChatPage = () => {
           id="suggestions-container"
           className={shouldScrollSuggestions ? "scrollableSuggestions" : ""}
         >
-          {showSuggestions && (
+          {showSuggestions && !isloading && (
             <div
               className="staticMenuColumn"
               onClick={() => sendMessage("Menu", "text")}

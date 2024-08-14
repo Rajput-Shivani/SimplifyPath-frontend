@@ -4,6 +4,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import IntegrationService from "../../services/api/integrationService";
 import { toast } from "react-toastify";
 import { setIsConfirmation } from "./globalSlice";
+import { unauthorizedError } from "../../utils/helpers";
 // import { setLoading } from "./global";
 // import { unauthorizedError } from "../../utils/helpers";
 
@@ -19,7 +20,7 @@ export const getIntegrationsData = createAsyncThunk(
       return response;
     } catch (error) {
       if (error?.response && error?.response.status === 401) {
-        // unauthorizedError(navigate);
+        unauthorizedError(navigate);
       }
       //   dispatch(setLoading(false));
       throw error;

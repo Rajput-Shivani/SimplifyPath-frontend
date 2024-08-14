@@ -1,49 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Layout,
   Form,
   Input,
   Button,
   Upload,
-  Tabs,
   Row,
   Col,
   Avatar,
   Select,
+  Spin,
 } from "antd";
-import {
-  UploadOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { LoadingOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 import "./profile.scss";
 import TopHeader from "../../components/header/Header";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProfileDetails,
-  setProfileLoading,
   updateProfileDetails,
 } from "../../redux/slices/profileSlice";
 import { useNavigate } from "react-router-dom";
 import { IntegrationContent } from "./IntegrationCotent";
 import SpinLoader from "../../components/Loader/SpinLoader";
+import { experienceOptions, genderOptions } from "../../utils/constants";
+import Loading from "../../components/Loader/Loading";
 
 const { Content } = Layout;
-const { TabPane } = Tabs;
 const { Option } = Select;
 
 export const Profile = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, profileLoading } = useSelector((state) => state.profileReducer);
-  const [imageUrl, setImageUrl] = useState(
-    user?.picture || "default-profile-image-url"
-  );
-
-  useEffect(() => {
-    dispatch(getProfileDetails());
-    dispatch(setProfileLoading(false));
-  }, [dispatch]);
+  const { user, loading, profileLoading } = useSelector((state) => state.profileReducer);
+  const defaultImage = "default-profile-image-url";
+  
+  const [imageUrl, setImageUrl] = useState(defaultImage);
 
   useEffect(() => {
     if (user) {
@@ -53,19 +45,22 @@ export const Profile = () => {
         experience: user.experience,
         contactNo: user.contactNo,
       });
-      setImageUrl(user.picture || "default-profile-image-url");
+      setImageUrl(user.picture || defaultImage);
     }
-  }, [user, form]);
+  }, [user, form, defaultImage]);
 
   const handleUpload = ({ file }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       setImageUrl(e.target.result);
     };
+    reader.onerror = (err) => {
+      console.error("Failed to read file:", err);
+    };
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (values) => {
+  const handleSubmit =  (values) => {
     const body = {
       gender: values.gender,
       experience: values.experience,
@@ -74,11 +69,37 @@ export const Profile = () => {
     };
 
     try {
-      dispatch(updateProfileDetails({ body: body, navigate: navigate }));
+       dispatch(updateProfileDetails({ body, navigate }));
     } catch (error) {
       console.error("Failed to update profile:", error);
     }
   };
+
+  const handleReset = () => {
+    const currentEmail = form.getFieldValue("email");
+    form.resetFields();
+    form.setFieldsValue({ email: currentEmail });
+  };
+
+  const genderSelectOptions = useMemo(() => (
+    genderOptions.map(({ value, label }) => (
+      <Option key={value} value={value}>
+        {label}
+      </Option>
+    ))
+  ), []);
+
+  const experienceSelectOptions = useMemo(() => (
+    experienceOptions.map((exp) => (
+      <Option key={exp} value={exp}>
+        {exp}
+      </Option>
+    ))
+  ), []);
+
+  useEffect(() => {
+    dispatch(getProfileDetails());
+  }, []);
 
   return (
     <Layout className="chat-layout">
@@ -89,7 +110,6 @@ export const Profile = () => {
         icon={<UserOutlined className="icon-size text-white" />}
       />
       <Content className="app-content">
-        {profileLoading && <SpinLoader />}
         <Form
           form={form}
           layout="vertical"
@@ -98,8 +118,8 @@ export const Profile = () => {
         >
           <Row gutter={16}>
             <Col xs={24} sm={8} className="profile-image-col">
-            <div className="profile-name">{user?.name}</div>
-              <Avatar size={128} src={imageUrl} className="profile-avatar" />
+              <div className="profile-name">{user?.name}</div>
+              <Avatar size={128} src={profileLoading ? <Spin indicator={<LoadingOutlined spin />} size="large" /> : imageUrl} className="profile-avatar" />
               <Upload
                 showUploadList={false}
                 customRequest={handleUpload}
@@ -112,56 +132,36 @@ export const Profile = () => {
             </Col>
 
             <Col xs={24} sm={16}>
-              <Row className="fields-section">
+              {
+                profileLoading ?
+                <Loading/>
+                :
+                <Row className="fields-section">
                 <Col xs={24} sm={11}>
                   <Form.Item label="Email" name="email">
                     <Input disabled />
                   </Form.Item>
                   <Form.Item label="Gender" name="gender">
-                    <Select>
-                      <Option value="male">Male</Option>
-                      <Option value="female">Female</Option>
-                      <Option value="other">others</Option>
-                    </Select>
+                    <Select>{genderSelectOptions}</Select>
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12}>
                   <Form.Item label="Experience" name="experience">
-                    <Select>
-                      <Option value="Freshers">Freshers</Option>
-                      <Option value="1 year">1 year</Option>
-                      <Option value="2 years">2 years</Option>
-                      <Option value="3 years">3 years</Option>
-                      <Option value="4 years">4 years</Option>
-                      <Option value="5 years">5 years</Option>
-                      <Option value="6 years">6 years</Option>
-                      <Option value="7 years">7 years</Option>
-                      <Option value="8 years">8 years</Option>
-                      <Option value="9 years">9 years</Option>
-                      <Option value="10 years">10 years</Option>
-                      <Option value="10+ years">10+ years</Option>
-                    </Select>
+                    <Select>{experienceSelectOptions}</Select>
                   </Form.Item>
                   <Form.Item label="Contact No." name="contactNo">
                     <Input />
                   </Form.Item>
                 </Col>
               </Row>
+              }
               <div className="button-group">
                 <Button type="primary" htmlType="submit" className="reset-btn">
                   Save
                 </Button>
-                <Button
-                  className="reset-btn"
-                  onClick={() => {
-                    const currentEmail = form.getFieldValue("email");
-                    form.resetFields();
-                    form.setFieldsValue({ email: currentEmail });
-                  }}
-                >
+                <Button className="reset-btn" onClick={handleReset}>
                   Reset Profile
                 </Button>
-
               </div>
               <IntegrationContent />
             </Col>

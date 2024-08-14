@@ -9,8 +9,6 @@ const ProtectedRoute = ({ children }) => {
   const isAuthenticated =
     storage.get("token") && new Date() < new Date(tokenExpiry);
 
-  console.log("isAuthenticated", isAuthenticated, "chil", children);
-
   return isAuthenticated ? children : <Navigate to={PAGE_ROUTES.LOGIN} />;
 };
 

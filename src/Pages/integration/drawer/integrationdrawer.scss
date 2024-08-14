@@ -1,3 +1,4 @@
+@import "../../../styles/colors";
 .integration-drawer {
     .ant-drawer-body {
       padding: 24px;
@@ -22,6 +23,14 @@
   
     .ant-list-item:last-child {
       border-bottom: none;
+    }
+    .brand-name{
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+    .website{
+      color: $primary-color;
     }
   }
   

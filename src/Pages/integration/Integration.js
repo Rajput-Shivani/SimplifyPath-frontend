@@ -18,7 +18,7 @@ import {
   activateIntegrationsTelegram,
   getIntegrationsData,
   getOrgIntegrationsData,
-  removeIntegrationsData,
+  loading,
   setEmployeeId,
   setIntegrationDrawerOpen,
   setRefreshToken,
@@ -58,6 +58,9 @@ import TopHeader from "../../components/header/Header";
 import Confirmation from "../../components/dialog/Confirmation";
 import { IntegrationDrawer } from "./drawer/IntegrationDrawer";
 import SpinLoader from "../../components/Loader/SpinLoader";
+import { getProfileDetails } from "../../redux/slices/profileSlice";
+import { isIntegrationAdd, isIntegrationGet, isOrganizationalAppAdd, isOrganizationalAppGet } from "../../utils/permissions";
+import Loading from "../../components/Loader/Loading";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -68,7 +71,7 @@ export const IntegrationPage = () => {
   const [activeTab, setActiveTab] = useState("1");
   const [selectedOrg, setSelectedOrg] = useState(null);
   const { selectedOptionData } = useSelector((state) => state.globalReducer);
-  const [activeStatus, setActiveStatus]= useState(false)
+  const [activeStatus, setActiveStatus] = useState(false);
   const [activeTitle, setActiveTitle] = useState(""); // Track the active card title
   const {
     orgIntegrationList,
@@ -78,7 +81,7 @@ export const IntegrationPage = () => {
     user,
     telegramId,
     telegramToken,
-    loader
+    loader,
   } = useSelector((state) => state.integrationReducer);
   const { actionName } = useSelector((state) => state.popUpRedducer);
 
@@ -99,11 +102,10 @@ export const IntegrationPage = () => {
       dispatch(setPopUpTitle(`${activeStatus} Telegram`));
       dispatch(setIsPopUpShow(true));
       dispatch(setCloseBtnName("Cancel"));
-        dispatch(setSubmitBtnName("Submit"));
+      dispatch(setSubmitBtnName("Submit"));
     }
   };
 
- 
   const handleActivateSwitch = () => {
     const payload = {
       name: selectedOptionData?.name,
@@ -116,13 +118,15 @@ export const IntegrationPage = () => {
     dispatch(setIsConfirmation(false));
   };
 
-  const handleTelegramActivate = () =>{
+  const handleTelegramActivate = () => {
     const payload = {
       telegramToken: telegramToken,
-      activate:true
+      activate: true,
     };
-    dispatch(activateIntegrationsTelegram({body:payload,navigate:navigate}))
-  }
+    dispatch(
+      activateIntegrationsTelegram({ body: payload, navigate: navigate })
+    );
+  };
 
   const logoMapping = {
     keka,
@@ -145,7 +149,6 @@ export const IntegrationPage = () => {
       showSwitch,
       isActivated,
       selectedCard,
-      activatedData,
     }) => {
       console.log("selected", selectedCard);
       const [showMore, setShowMore] = useState(false);
@@ -201,8 +204,6 @@ export const IntegrationPage = () => {
         </>
       );
 
-      console.log(" setActiveStatus(isActivated)", isActivated)
-
       return (
         <Col xs={24} sm={12} md={8} className="card-section">
           <Card className="custom-card">
@@ -211,10 +212,18 @@ export const IntegrationPage = () => {
                 <div className={activeTab === "2" ? "logo-org" : "logo"}>
                   <Avatar src={logoMapping[title] || ""} />
                 </div>
-                {showSwitch && (
-                  <div className={selectedCard?.activated ?"switch-activated-container":"switch-container"}>
+                {isOrganizationalAppAdd && showSwitch && (
+                  <div
+                    className={
+                      selectedCard?.activated
+                        ? "switch-activated-container"
+                        : "switch-container"
+                    }
+                  >
                     <Switch
-                    className={selectedCard?.activated ? 'switch-activated' : ''}
+                      className={
+                        selectedCard?.activated ? "switch-activated" : ""
+                      }
                       onClick={() => {
                         dispatch(setSelectedOption(selectedCard));
                         handleSwitchToggle(
@@ -242,26 +251,36 @@ export const IntegrationPage = () => {
                 </Button>
               )}
             </div>
-            <div className="footer">
-              {isActivated ? (
-                <Button onClick={()=>{
-                  setActiveStatus(isActivated)
-                  handleDeactivate()
-                  }}>
+           {activeTab === '1' && <div className={isIntegrationAdd ? "footer" :"footer-card-invisible"}>
+              {isIntegrationAdd && isActivated ? (
+                <Button
+                  onClick={() => {
+                    setActiveStatus(isActivated);
+                    handleDeactivate();
+                  }}
+                  className="deactivate-btn"
+                >
                   {isActivated && "Deactivate"}
                 </Button>
-              ) : (
-                <Button onClick={()=>{
-                  setActiveStatus(isActivated)
-                  handleActive()
-                  }}>
+              ) :isIntegrationAdd && (
+                <Button
+                  onClick={() => {
+                    setActiveStatus(isActivated);
+                    handleActive();
+                  }}
+                >
                   {!isActivated && "Activate"}
                 </Button>
               )}
-              <Button onClick={() => {dispatch(setIntegrationDrawerOpen(true));
-                dispatch(setSelectedOption(selectedCard))
-              }}>Kick-Starter</Button>
-            </div>
+              <Button
+                onClick={() => {
+                  dispatch(setIntegrationDrawerOpen(true));
+                  dispatch(setSelectedOption(selectedCard));
+                }}
+              >
+                Kick-Starter
+              </Button>
+            </div>}
           </Card>
         </Col>
       );
@@ -282,7 +301,6 @@ export const IntegrationPage = () => {
       return acc;
     }, {});
   };
-console.log("activateststaus", activeStatus)
   const renderIntegrationCards = (integrationList, showSwitch) => {
     const groupedIntegrations = groupByCategory(integrationList);
 
@@ -415,20 +433,23 @@ console.log("activateststaus", activeStatus)
         );
       return null;
     } else if (selectedOptionData?.name === "telegram") {
-      return <div className="pop-up-content">
-      <div>Telegram Token</div>
-      <Input
-        size="large"
-        placeholder="Enter Telegram Token"
-        prefix={<KeyOutlined />}
-        value={telegramToken}
-        onChange={(e) => dispatch(setTelegramToken(e.target.value))}
-      />
-    </div>
+      return (
+        <div className="pop-up-content">
+          <div>Telegram Token</div>
+          <Input
+            size="large"
+            placeholder="Enter Telegram Token"
+            prefix={<KeyOutlined />}
+            value={telegramToken}
+            onChange={(e) => dispatch(setTelegramToken(e.target.value))}
+          />
+        </div>
+      );
     } else {
       return (
         <div className="confirm-text">
-          Are you sure you want to {activeStatus?  "deacivate" : "activate"} ? {<div>{activeTitle}</div>}
+          Are you sure you want to {activeStatus ? "deacivate" : "activate"} ?{" "}
+          {<div>{activeTitle}</div>}
         </div>
       );
     }
@@ -443,13 +464,13 @@ console.log("activateststaus", activeStatus)
     } else {
       dispatch(getOrgIntegrationsData(navigate));
     }
-  }, [activeTab, dispatch, navigate, selectedOptionData]);
+  }, [activeTab, selectedOptionData]);
 
   const integrationCards = useMemo(() => {
     const showSwitch = activeTab === "2";
     return activeTab === "1"
-      ? renderIntegrationCards(integrationList, showSwitch)
-      : renderOrganizationCards(orgIntegrationList, showSwitch);
+      ? isIntegrationGet && renderIntegrationCards(integrationList, showSwitch)
+      : isOrganizationalAppGet && renderOrganizationCards(orgIntegrationList, showSwitch);
   }, [activeTab, integrationList, orgIntegrationList]);
 
   return (
@@ -462,12 +483,14 @@ console.log("activateststaus", activeStatus)
       />
       <Content className="integration-content">
         <Tabs defaultActiveKey="1" onChange={handleTabChange}>
-          <TabPane tab="Your Apps" key="1">
-            {loader ? <SpinLoader/> : integrationCards}
+         {isIntegrationGet &&  <TabPane tab="Your Apps" key="1">
+            {loader ? <Loading/> : integrationCards}
+          </TabPane>}
+         {
+          isOrganizationalAppGet &&  <TabPane tab="Organization Apps" key="2">
+            {loader ? <Loading/> : integrationCards}
           </TabPane>
-          <TabPane tab="Organization Apps" key="2">
-            {loader ? <SpinLoader/> : integrationCards}
-          </TabPane>
+         }
         </Tabs>
       </Content>
       <DialogBox onSubmit={handleTelegramActivate} renderUi={popUpContent} />
@@ -476,7 +499,7 @@ console.log("activateststaus", activeStatus)
         isRemove={false}
         onSubmit={handleActivateSwitch}
       />
-      <IntegrationDrawer/>
+      <IntegrationDrawer />
     </Layout>
   );
 };

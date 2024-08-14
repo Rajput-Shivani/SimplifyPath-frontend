@@ -38,13 +38,14 @@ import {
 } from "../../redux/slices/popUpSlice";
 import { DialogBox } from "../dialog/DialogBox";
 import TopHeader from "../header/Header";
+import { isOrganizationEdit, isUserManagementEdit, isUserRoleEdit } from "../../utils/permissions";
+import {isOrganizationGet} from "../../utils/permissions"
 
 const { Content, Footer } = Layout;
 
 const CommanTable = ({
   title,
   data,
-  onEdit,
   onDelete,
   visibleColumns,
   setVisibleColumns,
@@ -56,7 +57,8 @@ const CommanTable = ({
   isFooter,
   customFooter,
   onClose,
-  isAdd
+  isAdd,
+  loading
 }) => {
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState("");
@@ -70,17 +72,10 @@ const CommanTable = ({
     (state) => state.globalReducer
   );
   const { getRolesData } = useSelector((state) => state.userManagementReducer);
+  const editPermissionEdit = (title === "User Role" && isUserRoleEdit) ||
+  (title === "User Management" && isUserManagementEdit) ||
+  (title === "Organization" && !isOrganizationEdit);
 
-  const handleMenuClick = (e, record) => {
-    if (e.key === "edit") {
-      onEdit(record);
-    } else if (e.key === "delete") {
-      showDeleteConfirm(
-        [record.key],
-        `Are you sure you want to delete ${record.name}?`
-      );
-    }
-  };
 
   const menu = (record) => {
     return (
@@ -112,13 +107,14 @@ const CommanTable = ({
           <Button
             type="primary"
             onClick={() => {
-              apiCall(page, limit, searchInput);
+              dispatch(setPage(1))
+              apiCall(1, limit, searchInput);
               clearFilters();
               confirm();
             }}
             icon={<SearchOutlined />}
             size="small"
-            style={{ width: 120 }}
+            style={{ width: 120 ,height:44}}
           >
             Search
           </Button>
@@ -264,8 +260,7 @@ const CommanTable = ({
             dataIndex: "email",
             ...(visibleColumns.email
               ? {
-                  sorter: (a, b) =>
-                    (a.email || "").localeCompare(b.email || ""),
+                  sorter: (a, b) => (a.email || "").localeCompare(b.email || ""),
                   ...getColumnSearchProps("email"),
                 }
               : { render: () => null, className: "hidden-column" }),
@@ -289,7 +284,6 @@ const CommanTable = ({
             ),
             className: "role-column",
           },
-
           {
             title: "Status",
             dataIndex: "status",
@@ -305,7 +299,7 @@ const CommanTable = ({
                       {record.verified ? "Verified" : "Unverified"}
                     </Tag>
                   ),
-                  className: "status-column", // Add a class if needed for styling
+                  className: "status-column",
                 }
               : { render: () => null, className: "hidden-column" }),
           },
@@ -334,12 +328,11 @@ const CommanTable = ({
           },
           {
             title: "Company Email",
-            dataIndex: "companyEmail",
+            dataIndex: "admin",
             ...(visibleColumns.companyEmail
               ? {
                   sorter: (a, b) =>
                     (a.companyEmail || "").localeCompare(b.companyEmail || ""),
-                  //   responsive: ["md"],
                 }
               : { render: () => null, className: "hidden-column" }),
           },
@@ -348,64 +341,50 @@ const CommanTable = ({
             dataIndex: "status",
             ...(visibleColumns.status
               ? {
-                  sorter: (a, b) =>
-                    (a.status || "").localeCompare(b.status || ""),
-                  //   responsive: ["md"],
+                  sorter: (a, b) => (a.status || "").localeCompare(b.status || ""),
+                  render: (status) => (
+                    <Tag color={status === "active" ? "green" : "red"}>
+                      {status}
+                    </Tag>
+                  ),
                 }
               : { render: () => null, className: "hidden-column" }),
           },
         ]),
-    {
-      title:
-        selectedRowKeys?.length > 0 ? (
-          <div
-            onClick={() =>
-              showDeleteConfirm(
-                selectedRowKeys,
-                "Are you sure you want to delete all data?"
-              )
-            }
-          >
-            <DeleteOutlined style={{ marginRight: "10px" }} />
-            Delete Data
-          </div>
-        ) : (
-          "Actions"
-        ),
-      key: "actions",
-      render: (text, record) => (
-        <Dropdown overlay={menu(record)} trigger={["click"]}>
-          <a onClick={(e) => e.preventDefault()}>
-            <Space>
-              <MoreOutlined style={{ color: "141a40", fontSize: "20px" }} />
-            </Space>
-          </a>
-        </Dropdown>
-      ),
-    },
+    ...(isOrganizationGet && editPermissionEdit
+      ? [
+          {
+            title:
+              selectedRowKeys?.length > 0 ? (
+                <div
+                  onClick={() =>
+                    showDeleteConfirm(
+                      selectedRowKeys,
+                      "Are you sure you want to delete all data?"
+                    )
+                  }
+                >
+                  <DeleteOutlined style={{ marginRight: "10px" }} />
+                  Delete Data
+                </div>
+              ) : (
+                "Actions"
+              ),
+            key: "actions",
+            render: (text, record) => (
+              <Dropdown overlay={menu(record)} trigger={["click"]}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Space>
+                    <MoreOutlined style={{ color: "141a40", fontSize: "20px" }} />
+                  </Space>
+                </a>
+              </Dropdown>
+            ),
+          },
+        ]
+      : []),
   ].filter((col) => visibleColumns[col.dataIndex] !== false);
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys),
-    getCheckboxProps: (record) => ({
-      disabled: record.permissions === "Admin" || record.role === "Admin",
-      name: record.name,
-      className:
-        record.permissions === "Admin" || record.role === "Admin"
-          ? "disabled-row"
-          : "",
-    }),
-    renderCell: (checked, record, index, originNode) => {
-      return record.permissions === "Admin" || record.role === "Admin" ? (
-        <Tooltip title="Permission Required: You do not have the rights to delete admin data.">
-          <span>{originNode}</span>
-        </Tooltip>
-      ) : (
-        originNode
-      );
-    },
-  };
+  
 console.log("visibleColumns", visibleColumns)
   return (
     <Layout className="table-layout">
@@ -431,6 +410,7 @@ console.log("visibleColumns", visibleColumns)
               ? "disabled-row"
               : ""
           }
+          loading={loading}
         />
       </Content>
       <Footer className="pagination-footer">

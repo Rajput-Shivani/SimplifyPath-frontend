@@ -81,6 +81,7 @@
       .brand-name {
         font-size: 18px;
         font-weight: bold;
+        text-transform: capitalize;
       }
 
       .tagline {
@@ -100,6 +101,51 @@
       background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnnttsZgXpSbNy7ucF1Uw7LGw8JQyWrzUuWw&s");
       background-repeat: no-repeat;
       background-size: cover;
+    }
+
+    .footer-card-invisible {
+      background: #ffffff;
+      padding: 10px;
+      color: #888;
+      font-size: 14px;
+      text-align: center;
+      border-top: 1px solid #fff;
+      display: flex;
+      justify-content: center;
+      flex-direction: row;
+      background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnnttsZgXpSbNy7ucF1Uw7LGw8JQyWrzUuWw&s");
+      background-repeat: no-repeat;
+      background-size: cover;
+
+      button {
+        color: black;
+        box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+        background: white;
+        padding: 20px 25px;
+        border: 1p solid;
+        border: 1px solid #b6b6b6;
+        box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+          rgba(17, 17, 26, 0.1) 0px 8px 24px,
+          rgba(17, 17, 26, 0.1) 0px 16px 56px;
+        width: auto;
+      }
+
+      span {
+        margin: 0 10px;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        padding: 10px 5px;
+        text-align: center;
+
+        .kick-starter-btn {
+          margin: 10px 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
     }
 
     .footer {
@@ -178,7 +224,10 @@
   height: 45px;
   color: red;
 }
-
+.deactivate-btn{
+  color: red !important;
+  border: 1px solid red !important;
+}
 
 @media (max-width: 768px) {
   .integration-card {

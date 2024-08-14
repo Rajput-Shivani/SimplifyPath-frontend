@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Button, Radio, Row, Col, Pagination, List } from "antd";
+import { Layout, Button, Radio, Row, Col, Pagination, List, Spin, Card, Tag } from "antd";
 import {
   FileTextOutlined,
   LinkOutlined,
@@ -28,6 +28,12 @@ import {
 } from "../../../redux/slices/globalSlice";
 import Confirmation from "../../../components/dialog/Confirmation";
 import { Notification } from "../firebaseNotification/Notification";
+import {
+  isTrainAndContentAdd,
+  isTrainAndContentNotification,
+  isTrainAndContentDelete,
+} from "../../../utils/permissions";
+import Loading from "../../../components/Loader/Loading";
 
 const { Content } = Layout;
 
@@ -38,7 +44,7 @@ export const TrainAndContent = () => {
   const [selectedRadio, setSelectedRadio] = useState(null);
   const { page, limit, searchInput, selectedOptionData, totalPage } =
     useSelector((state) => state.globalReducer);
-  const { selectedTrainStatus, allDocument } = useSelector(
+  const { selectedTrainStatus, allDocument, loading } = useSelector(
     (state) => state.trainAndContentReducer
   );
 
@@ -77,7 +83,7 @@ export const TrainAndContent = () => {
   const isConfirmation = (record) => {
     dispatch(setConfirmationContent("Are you sure you want to delete"));
     dispatch(setConfirmationData(record?.fileName));
-    dispatch(setConfirmationTitle(`Remove ${record?.type}`));
+    dispatch(setConfirmationTitle(`Remove Training Data`));
     dispatch(setIsConfirmation(true));
   };
 
@@ -96,7 +102,7 @@ export const TrainAndContent = () => {
   };
 
   const handleRadioChange = (e, list) => {
-    setSelectedRadio(list._id); // Ensure only one radio button is selected
+    setSelectedRadio(list._id);
     dispatch(setSelectedOption(list));
   };
 
@@ -111,12 +117,14 @@ export const TrainAndContent = () => {
       <Content className="content-panel">
         <div className="train-content">
           <div className="train-left">
-            <Button
-              onClick={trainContentOpen}
-              className="add-training-data-btn"
-            >
-              Add Training Data
-            </Button>
+            {isTrainAndContentAdd && (
+              <Button
+                onClick={trainContentOpen}
+                className="add-training-data-btn"
+              >
+                Add Training Data
+              </Button>
+            )}
             <div className="train-form">
               <Button
                 style={{ width: "100%" }}
@@ -159,36 +167,42 @@ export const TrainAndContent = () => {
               </Button>
             </div>
             <div className="train-items">
-              <div className="train-items-scrollable">
-                {allDocument?.data?.map((list) => {
-                  return (
-                    <List key={list._id}>
-                      <Row className="train-item">
-                        <Col span={20}>
-                          <Radio
-                            checked={selectedRadio === list._id}
-                            onChange={(e) => handleRadioChange(e, list)}
-                          >
-                            {list.fileName.replace(/\.(pdf|txt|doc)$/, "") ||
-                              list.fileName}
-                          </Radio>
-                        </Col>
-                        <Col
-                          onClick={() => {
-                            dispatch(setSelectedOption(list));
-                            isConfirmation(list);
-                          }}
-                          span={4}
-                          className="train-item-btn"
-                        >
-                          <DeleteOutlined />
-                        </Col>
-                      </Row>
-                    </List>
-                  );
-                })}
-              </div>
-              <div className="pagination-footer text-center">
+              {loading ? (
+                <Loading />
+              ) : (
+                <div className="train-items-scrollable">
+                  {allDocument?.data?.map((list) => {
+                    return (
+                      <List key={list._id}>
+                        <Row className="train-item">
+                          <Col span={20}>
+                            <Radio
+                              checked={selectedRadio === list._id}
+                              onChange={(e) => handleRadioChange(e, list)}
+                            >
+                              {list.fileName.replace(/\.(pdf|txt|doc)$/, "") ||
+                                list.fileName}
+                            </Radio>
+                          </Col>
+                          {isTrainAndContentDelete && (
+                            <Col
+                              onClick={() => {
+                                dispatch(setSelectedOption(list));
+                                isConfirmation(list);
+                              }}
+                              span={4}
+                              className="train-item-btn"
+                            >
+                              <DeleteOutlined />
+                            </Col>
+                          )}
+                        </Row>
+                      </List>
+                    );
+                  })}
+                </div>
+              )}
+              <div className="pagination-footer-content text-center">
                 <Pagination
                   current={page}
                   pageSize={limit}
@@ -206,7 +220,7 @@ export const TrainAndContent = () => {
                     );
                   }}
                   showSizeChanger={false}
-                  className="pagination"
+                  className="pagination-content"
                 />
               </div>
             </div>
@@ -216,18 +230,34 @@ export const TrainAndContent = () => {
             <div className="preview-content-panel">
               <div className="preview-content">
                 {selectedOptionData?.type === "url" ? (
-                  <div>
-                    <LinkOutlined className="text-center" />
+                  <Card>
+                    {/* <LinkOutlined className="text-center" />
                     <div className="url-link">
                       {selectedOptionData?.urlLink}
-                    </div>
-                  </div>
+                    </div> */}
+                    <Tag
+                      type="primary"
+                      shape="round"
+                      icon={<LinkOutlined />}
+                      size={"large"}
+                      color="blue"
+                      className="url-link"
+                    >
+                      {selectedOptionData?.urlLink}
+                    </Tag>
+                  </Card>
                 ) : (
-                  <iframe
-                    className="preview-inner"
-                    title="Preview"
-                    src={selectedOptionData?.location}
-                  ></iframe>
+                  <>
+                    {loading ? (
+                      <Loading />
+                    ) : (
+                      <iframe
+                        className="preview-inner"
+                        title="Preview"
+                        src={selectedOptionData?.location}
+                      ></iframe>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -239,7 +269,7 @@ export const TrainAndContent = () => {
         setIsOpen={setIsTrainContentPopup}
       />
       <Confirmation isRemove={true} onRemove={handleRemoveContent} />
-      <Notification />
+      {isTrainAndContentNotification && <Notification />}
     </Layout>
   );
 };

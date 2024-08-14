@@ -29,7 +29,14 @@ import { update_user } from "../../redux/slices/userManagementSlice";
 
 const storage = new AppSecureStorage();
 
-export const DialogBox = ({ renderUi=()=>{},onSubmit,onNext ,isFooter, customFooter=()=>{}, onClose=()=>{}}) => {
+export const DialogBox = ({
+  renderUi = () => {},
+  onSubmit,
+  onNext,
+  isFooter,
+  customFooter = () => {},
+  onClose = () => {},
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -38,11 +45,23 @@ export const DialogBox = ({ renderUi=()=>{},onSubmit,onNext ,isFooter, customFoo
     user: { email, password },
     telegramId,
   } = useSelector((state) => state.integrationReducer);
-  const { isPopUpShow, actionName, popUpTitle, closeBtnName, submitBtnName,isEditpopup } =
-    useSelector((state) => state.popUpRedducer);
-  const { page, filterValue, limit, searchInput, selectedRole,sortConfig,selectedUserRoleId } = useSelector(
-    (state) => state.globalReducer
-  );
+  const {
+    isPopUpShow,
+    actionName,
+    popUpTitle,
+    closeBtnName,
+    submitBtnName,
+    isEditpopup,
+  } = useSelector((state) => state.popUpRedducer);
+  const {
+    page,
+    filterValue,
+    limit,
+    searchInput,
+    selectedRole,
+    sortConfig,
+    selectedUserRoleId,
+  } = useSelector((state) => state.globalReducer);
 
   const handleOk = () => {
     dispatch(setIsPopUpShow(false));
@@ -50,10 +69,9 @@ export const DialogBox = ({ renderUi=()=>{},onSubmit,onNext ,isFooter, customFoo
     dispatch(setUser({ email: "", password: "" }));
     dispatch(setTelegramId(""));
     dispatch(setEmployeeId(""));
-    dispatch(setTelegramToken(""))
-    dispatch(setIsEditpopup(false))
-    onClose()
-    
+    dispatch(setTelegramToken(""));
+    dispatch(setIsEditpopup(false));
+    onClose();
   };
 
   const handleIntegrations = (integrationAction) => {
@@ -121,9 +139,9 @@ export const DialogBox = ({ renderUi=()=>{},onSubmit,onNext ,isFooter, customFoo
       case "salesforce":
         handleExternalIntegrations();
         break;
-        case "telegram":
-          onSubmit();
-          break;
+      case "telegram":
+        onSubmit();
+        break;
       default:
         break;
     }
@@ -165,10 +183,10 @@ export const DialogBox = ({ renderUi=()=>{},onSubmit,onNext ,isFooter, customFoo
     <Modal
       className="modal-container"
       title={popUpTitle}
-      open={isEditpopup ? isEditpopup :isPopUpShow}
+      open={isEditpopup ? isEditpopup : isPopUpShow}
       onOk={handleOk}
       onCancel={handleOk}
-      footer={isFooter ? customFooter () : renderFooter()}
+      footer={isFooter ? customFooter() : renderFooter()}
       centered
     >
       {renderUi()}

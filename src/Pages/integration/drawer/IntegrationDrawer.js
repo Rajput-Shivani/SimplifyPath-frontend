@@ -18,8 +18,8 @@ export const IntegrationDrawer = () => {
   const renderTitle = () => {
     return (
       <div style={{ display: "flex", gap: "20px" }}>
-        <div>{selectedOptionData?.name}</div>
-        <div>{selectedOptionData?.website}</div>
+        <div className="brand-name">{selectedOptionData?.name}</div>
+        <div className="website">{selectedOptionData?.website}</div>
       </div>
     );
   };

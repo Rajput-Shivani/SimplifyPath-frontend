@@ -186,6 +186,7 @@
   margin-top: 20px;
 }
 
+
 @media (max-width: 576px) {
   .app-content {
     padding: 16px;
@@ -196,6 +197,15 @@
 
     .profile-form .button-group .ant-btn {
       margin-top: 10px;
+    }
+    .integrations-list{
+      display: flex !important;
+      flex: none !important;
+      align-items: center !important;
+      max-width: 100%;
+      width: 100%;
+      flex-wrap: wrap !important;
+      justify-content: center !important;
     }
   }
 }

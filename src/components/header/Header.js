@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Layout, Menu, Dropdown, Button, Checkbox, Tag } from "antd";
 import { DownOutlined, MoreOutlined } from "@ant-design/icons";
+import {
+  isUserRoleAdd,
+  isUserManagementAdd,
+  isOrganizationAdd,
+} from "../../utils/permissions";
 import "./header.scss";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { getProfileDetails } from "../../redux/slices/profileSlice";
 
 const { Header } = Layout;
 
@@ -13,10 +21,11 @@ const TopHeader = ({
   icon,
   onChangeOptions,
   isAdd,
-  openAddPopup
+  openAddPopup,
 }) => {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 576);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleResize = useCallback(() => {
     setIsSmallScreen(window.innerWidth < 576);
   }, []);
@@ -49,12 +58,23 @@ const TopHeader = ({
       {isRightContent && (
         <Menu.Item>
           <Dropdown overlay={renderColumnMenu()} trigger={["click"]}>
-            <Button className="columns-btn">Columns <DownOutlined /></Button>
+            <Button className="columns-btn">
+              Columns <DownOutlined />
+            </Button>
           </Dropdown>
         </Menu.Item>
       )}
     </Menu>
   );
+
+  const addPermission =
+    (title === "User Role" && isUserRoleAdd) ||
+    (title === "User Management" && isUserManagementAdd) ||
+    (title === "Organization" && !isOrganizationAdd);
+
+  useEffect(() => {
+    dispatch(getProfileDetails({ navigate: navigate }));
+  }, []);
 
   return (
     <Header className="sticky-header">
@@ -64,16 +84,31 @@ const TopHeader = ({
             {icon}
             <div className="text-white">
               <div className="display-flex-center-gap-10">
-                {isTitle && <div className={isSmallScreen ? "header-title-text-small": "header-title-text"}>{title}</div>}
-                {!isSmallScreen && isAdd && (
-                  <Tag style={{padding:"5px 10px", cursor:"pointer"}}  onClick={openAddPopup}>Add {title}</Tag>
+                {isTitle && (
+                  <div
+                    className={
+                      isSmallScreen
+                        ? "header-title-text-small"
+                        : "header-title-text"
+                    }
+                  >
+                    {title}
+                  </div>
+                )}
+                {!isSmallScreen && addPermission && (
+                  <Tag
+                    style={{ padding: "5px 10px", cursor: "pointer" }}
+                    onClick={openAddPopup}
+                  >
+                    Add {title}
+                  </Tag>
                 )}
               </div>
             </div>
           </div>
         </div>
         <div className="header-right">
-          {isSmallScreen  && isAdd ? (
+          {isSmallScreen && addPermission ? (
             <Dropdown overlay={renderMenu()} trigger={["click"]}>
               <Button className="more-btn">
                 <MoreOutlined />
@@ -82,7 +117,12 @@ const TopHeader = ({
           ) : (
             isRightContent && (
               <Dropdown overlay={renderColumnMenu()} trigger={["click"]}>
-                <Button className="columns-btn">Columns <DownOutlined /></Button>
+                <Tag
+                  style={{ padding: "5px 10px", cursor: "pointer" }}
+                  className="columns-btn"
+                >
+                  Columns <DownOutlined />
+                </Tag>
               </Dropdown>
             )
           )}

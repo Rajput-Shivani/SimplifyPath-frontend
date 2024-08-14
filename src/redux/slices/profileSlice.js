@@ -9,19 +9,20 @@ const profile = new ProfileService();
 
 export const getProfileDetails = createAsyncThunk(
   "/profile",
-  async (navigate, { dispatch }) => {
-    dispatch(setProfileLoading(true))
+  async ({navigate}, { dispatch }) => {
+   dispatch(setProfileLoading(true))
     try {
       const response = await profile.getProfileDetailsData(navigate);
-      dispatch(setProfileLoading(false))
       if (response) {
+        dispatch(setProfileLoading(false))
         return response;
       } else {
+        dispatch(setProfileLoading(false))
         throw new Error();
       }
     } catch (error) {
-      dispatch(setProfileLoading(false))
       if (error?.response) {
+        dispatch(setProfileLoading(false))
         unauthorizedError(navigate);
       }
       throw error;
@@ -60,8 +61,8 @@ const profileSlice = createSlice({
     setSearchItemProfile: (state, action) => {
       state.searchItemProfile = action.payload;
     },
-    setProfileLoading:(state,action)=>{
-      state.profileLoading= action.payload
+    setProfileLoading:(state, action)=>{
+      state.profileLoading = action.payload
     }
   },
   extraReducers: (builder) => {

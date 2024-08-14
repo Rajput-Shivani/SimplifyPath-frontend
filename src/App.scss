@@ -29,6 +29,15 @@ body,
   height: 100%;
 }
 
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+color: $primary-color;
+}
+.ant-tabs .ant-tabs-tab-btn{
+  font-size: 16px;
+}
+.ant-tabs .ant-tabs-tab:hover{
+  color: $primary-color;
+}
 /* Responsive adjustments */
 @media (max-width: 768px) {
 

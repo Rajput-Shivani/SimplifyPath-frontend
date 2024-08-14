@@ -9,30 +9,27 @@ import { GoogleLogin } from "@react-oauth/google";
 import FreezLoader from "../../components/Loader/FreezLoader";
 import AppSecureStorage from "../../services/secureStorage";
 
-
 export const Login = () => {
   const storage = new AppSecureStorage();
-  let token = storage.get('token')
+  let token = storage.get("token");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {loader,userToken} = useSelector((state)=>state.authReducer)
+  const { loader, userToken } = useSelector((state) => state.authReducer);
 
   const handleLogin = async (data) => {
     dispatch(googleLogin({ data: data, navigate: navigate }));
   };
 
-
   useEffect(() => {
-    if (token || userToken) {
-      navigate('/chat');
+    const token = storage.get("token");
+    if (token) {
+      navigate("/chat");
     }
-  }, []);
-
-  console.log("token", userToken, "tokenUSe", token)
+  }, [navigate, storage]);
 
   return (
     <Layout className="login-layout">
-        {loader && <FreezLoader />} 
+      {loader && <FreezLoader />}
       <div className="login-container">
         <div className="left-panel">
           <div className="login-box">
@@ -45,7 +42,7 @@ export const Login = () => {
               onError={() => {
                 console.log("Login Failed");
               }}
-              // useOneTap
+              useOneTap
             />
           </div>
         </div>

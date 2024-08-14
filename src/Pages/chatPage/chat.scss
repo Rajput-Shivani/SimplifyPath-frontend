@@ -103,6 +103,7 @@
   margin-top: 15px;
   align-self: flex-start;
   color: black;
+   margin-bottom:10px
 }
 
 .right {
@@ -226,6 +227,20 @@ code .suggestion-container {
   color: $bg-white !important;
 }
 
+.bot-message {
+  max-width: 60%; 
+  word-wrap: break-word;
+  white-space: pre-wrap; 
+}
+.thumbs-icons{
+  display: flex;
+  gap:20px
+  
+}
+.thumbs-icon svg{
+     width: 20px;
+     height: 20px; 
+}
 
 
 @media only screen and (max-width: 768px) {
@@ -239,6 +254,9 @@ code .suggestion-container {
 
   .chat-input {
     font-size: 14px;
+  }
+  .bot-message{
+    max-width:100% ;
   }
 
   .chat-list .ant-list-item-meta .message-text {
@@ -273,3 +291,9 @@ code .suggestion-container {
   gap: 10px;
   margin-top: 20px;
 }
+
+// .chat-wrapper{
+//   display: flex !important;
+//   justify-content: space-between !important;
+// }
+

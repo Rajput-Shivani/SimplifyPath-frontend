@@ -9,7 +9,7 @@ const PAGE_ROUTES = {
   CUSTOM: "/custom",
   USER_MANAGEMENT: "/user-management",
   ORGANIZATION: "/organization",
-  ANALYTICS:"/analytics"
+  ANALYTICS: "/analytics",
 };
 const API_ROUTES = {
   BASE_URL: process.env.REACT_APP_BACKEND_API_URL,
@@ -84,4 +84,32 @@ const CONFIG = {
   TIMEOUT: 30000,
 };
 
-export { PAGE_ROUTES, API_ROUTES, CONFIG,API_URL };
+const genderOptions = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Others" },
+];
+
+const experienceOptions = [
+  "Freshers",
+  "1 year",
+  "2 years",
+  "3 years",
+  "4 years",
+  "5 years",
+  "6 years",
+  "7 years",
+  "8 years",
+  "9 years",
+  "10 years",
+  "10+ years",
+];
+
+export {
+  PAGE_ROUTES,
+  API_ROUTES,
+  CONFIG,
+  API_URL,
+  genderOptions,
+  experienceOptions,
+};

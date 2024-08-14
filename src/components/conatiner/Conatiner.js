@@ -13,6 +13,7 @@ import Redirect from "../redirect/Redirect";
 import { UserManagement } from "../../Pages/userManagement/UserManagement";
 import { Organization } from "../../Pages/organization/Organization";
 import { Analytics } from "../../Pages/Analytics/Analytics";
+import routes from "../../Pages/routes";
 const { Content } = Layout;
 
 const AppContainer = () => (
@@ -23,7 +24,7 @@ const AppContainer = () => (
       flex: 1,
     }}
   >
-    <Routes>
+    {/* <Routes>
       <>
         <Route path="/" element={<Redirect />} />
         <Route path="/chat" element={<ChatPage />} />
@@ -36,7 +37,24 @@ const AppContainer = () => (
         <Route path="/organization" element={<Organization />} />
         <Route path="/analytics" element={<Analytics />} />
       </>
+    </Routes> */}
+    {
+      <Routes>
+      {routes.routes.map((list, index) => (
+        <Route
+          key={index}
+          path={list.path}
+          element={
+            <Layout data={routes.routes.map((item) => item)}>
+              {list.element}
+            </Layout>
+          }
+        />
+      ))}
+      {/* Fallback Route for Page Not Found */}
+      <Route path="*" element={"Page not found"} />
     </Routes>
+    }
   </Content>
 );
 

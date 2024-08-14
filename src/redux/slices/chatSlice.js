@@ -3,7 +3,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import { toast } from "react-toastify";
 import ChatService from "../../services/api/chatService";
-import { addDateAndTime } from "../../utils/helpers";
+import { addDateAndTime, unauthorizedError } from "../../utils/helpers";
+import { toast } from "react-toastify";
 
 const chat = new ChatService();
 // Get the current date dynamically
@@ -45,10 +46,10 @@ export const getfeedbackData = createAsyncThunk(
   `/feedback`,
   async ({ body, navigate, id }, { dispatch }) => {
     try {
-      dispatch(setLoading(true));
+      // dispatch(setLoading(true));
       const response = await chat.feedback(body, navigate, id);
-      // setTimeout(() => toast.success(response?.message), 3000);
-      dispatch(setLoading(false));
+      setTimeout(() => toast.success(response?.message), 3000);
+      // dispatch(setLoading(false));
       if (response) {
         const linkUrl = addDateAndTime(response);
         dispatch(setDateTime(linkUrl));
@@ -59,9 +60,9 @@ export const getfeedbackData = createAsyncThunk(
       }
     } catch (error) {
       if (error?.response) {
-        // unauthorizedError(navigate);
+        unauthorizedError(navigate);
       } else {
-        // toast.error("Something went wrong");
+        toast.error(error.response.message);
       }
       dispatch(setLoading(false));
       throw error;

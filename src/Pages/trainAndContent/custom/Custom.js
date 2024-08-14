@@ -27,6 +27,7 @@ import {
   setPromptsData,
   setSelectedOption,
 } from "../../../redux/slices/globalSlice";
+import Loading from "../../../components/Loader/Loading";
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -34,7 +35,7 @@ const { Text } = Typography;
 export const Custom = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { renderallCustomAction } = useSelector(
+  const { renderallCustomAction, loading } = useSelector(
     (state) => state.trainAndContentReducer
   );
   const {
@@ -94,8 +95,10 @@ export const Custom = () => {
           <div className="categories-title">Current Categories</div>
           <div className="categories">
             {/* put here dropdown */}
-
-            {renderallCustomAction?.map((category) => {
+{
+  loading ? <Loading/> :
+  <>
+   {renderallCustomAction?.map((category) => {
               const options = Object.keys(category?.actions);
 
               const menu = (
@@ -174,6 +177,10 @@ export const Custom = () => {
                 </Dropdown>
               );
             })}
+  </>
+
+}
+           
           </div>
         </div>
 

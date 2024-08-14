@@ -43,6 +43,7 @@ export const getAllUploadedDocuments = createAsyncThunk(
 export const getAllUploadedDocumentsProfile = createAsyncThunk(
   "/admin/train/content?page=1",
   async ({ page, limit, navigate, searchQuery }, { dispatch }) => {
+    dispatch(setIsDocumentLoad(true))
     try {
       const response = await trainAndContent.getAllDocumentsProfile(
         page,
@@ -51,12 +52,15 @@ export const getAllUploadedDocumentsProfile = createAsyncThunk(
         searchQuery
       );
       if (response) {
+        dispatch(setIsDocumentLoad(false))
         dispatch(setTotalPage(response?.total))
         return response;
       } else {
+        dispatch(setIsDocumentLoad(false))
         throw new Error();
       }
     } catch (error) {
+      dispatch(setIsDocumentLoad(false))
       if (error?.response && error?.response.status === 401) {
         unauthorizedError(navigate);
       }
@@ -485,7 +489,8 @@ const TrainAndContentSlice = createSlice({
     searchItemContent: "",
     searchItemCustom: "",
     //me
-    selectedTrainStatus:"text"
+    selectedTrainStatus:"text",
+    documentLoad:false
   },
   reducers: {
     setPreviewData: (state, action) => {
@@ -675,7 +680,10 @@ const TrainAndContentSlice = createSlice({
     //me
     setSelectedTrainStatus:(state, action)=>{
       state.selectedTrainStatus = action.payload
-    }
+    },
+    setIsDocumentLoad:(state, action)=>{
+      state.documentLoad = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -868,7 +876,8 @@ export const {
   setSearchItemContent,
   setSearchItemCustom,
   //me
-  setSelectedTrainStatus
+  setSelectedTrainStatus,
+  setIsDocumentLoad
 } = TrainAndContentSlice.actions;
 
 export default TrainAndContentSlice.reducer;

@@ -4,6 +4,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import OrganisationService from "../../services/api/organizationService";
 import { unauthorizedError } from "../../utils/helpers";
+import { setTotalPage } from "./globalSlice";
 
 const Organisation = new OrganisationService();
 
@@ -23,6 +24,7 @@ export const getOrganizationData = createAsyncThunk(
         sortDirection,
       });
       if (response) {
+        dispatch(setTotalPage(response?.total))
         return response;
       } else {
         throw new Error();
@@ -37,9 +39,9 @@ export const getOrganizationData = createAsyncThunk(
 );
 export const addOrganizationData = createAsyncThunk(
   "/addOrganizationData",
-  async (payload, navigate, { dispatch }) => {
+  async ({payload, navigate} ,{ dispatch }) => {
     try {
-      const response = await Organisation.addOrganization(payload, navigate);
+      const response = await Organisation.addOrganization(payload);
       dispatch(getOrganizationData());
       toast.success("Add Organization Successfully");
       return response.data;

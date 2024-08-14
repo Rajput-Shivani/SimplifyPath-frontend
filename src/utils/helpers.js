@@ -1,6 +1,8 @@
 // import { toast } from "react-toastify";
 
+import { toast } from "react-toastify";
 import AppSecureStorage from "../services/secureStorage";
+import { useDispatch } from "react-redux";
 
 export const formatTime = (timestamp) => {
   try {
@@ -67,9 +69,9 @@ const storage = new AppSecureStorage();
 export const unauthorizedError = (navigate) => {
   navigate("/");
   storage.clearStorage();
-  // toast.error(
-  //   "Your session has expired. Please proceed to log in again to continue accessing our services."
-  // );
+  toast.error(
+    "Your session has expired. Please proceed to log in again to continue accessing our services."
+  );
 };
 
 export const sortData = (data, key, direction) => {

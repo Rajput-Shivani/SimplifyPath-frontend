@@ -3,17 +3,17 @@ import { API_ROUTES } from "../../utils/constants";
 import { AxiosBase } from "./index";
 
 export default class UserManagementService extends AxiosBase {
-  //   addOrganization = async (body) => {
-  //     try {
-  //       const response = await this.requests.post(
-  //         `${API_ROUTES.ORGANIZATION.ORG}`,
-  //         body
-  //       );
-  //       return response;
-  //     } catch (err) {
-  //       throw err;
-  //     }
-  //   };
+    addOrganization = async (body) => {
+      try {
+        const response = await this.requests.post(
+          `${API_ROUTES.ORGANIZATION.ORG}`,
+          body
+        );
+        return response;
+      } catch (err) {
+        throw err;
+      }
+    };
 
   // Get all users filter
   getAllUserManagementData = async (page, limit, email, role, navigate) => {
